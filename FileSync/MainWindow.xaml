@@ -1,0 +1,22 @@
+﻿<Window x:Class="FileSync.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileSync"
+        mc:Ignorable="d"
+        Title="FileSync" Height="288.485" Width="374.394"
+        ResizeMode="NoResize">
+    <Grid>
+        <Label Content="External drive" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="146,11,0,0" RenderTransformOrigin="0.797,0.415"/>
+        <Label Content="Internal drive" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,11,0,0"/>
+        <ListBox Name="InternalPathsListBox" HorizontalAlignment="Left" Height="205" Margin="11,42,0,0" VerticalAlignment="Top" Width="130" SelectionChanged="InternalPathsListBox_SelectionChanged"/>
+        <ListBox Name="ExternalPathsListBox" HorizontalAlignment="Left" Height="205" Margin="146,42,0,0" VerticalAlignment="Top" Width="130" SelectionChanged="ExternalPathsListBox_SelectionChanged"/>
+        <Button Name="AddMappingBtn" Content="Add" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="281,42,0,0" Click="AddMappingBtn_Click"/>
+        <Button Name="RemoveMappingBtn" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="281,67,0,0" Click="RemoveMappingBtn_Click"/>
+        <Button Name="SyncNowBtn" Content="Sync now" HorizontalAlignment="Left" Margin="281,92,0,0" VerticalAlignment="Top" Width="70" Click="SyncNowBtn_Click"/>
+        <CheckBox Name="RecursiveCheckBox" Content="Recursive" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="281,135,0,0" IsChecked="True"/>
+        <CheckBox Name="SyncExternalToLocalCheckBox" Content="&lt;=" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="281,175,0,0" IsChecked="True" Checked="SyncExternalToLocalCheckBox_Checked" Unchecked="SyncExternalToLocalCheckBox_Unchecked"/>
+        <CheckBox Name="SyncLocalToExternalCheckBox" Content="=&gt;" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="281,155,0,0" IsChecked="True" Checked="SyncLocalToExternalCheckBox_Checked" Unchecked="SyncLocalToExternalCheckBox_Unchecked"/>
+    </Grid>
+</Window>
