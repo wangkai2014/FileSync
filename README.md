@@ -30,3 +30,7 @@ A small program to keep your external storage in sync.
 # Known bugs
 
 - If both external and internal drive are selected as the same drive (same root), conditional sync (internal to external or vice versa) will not work. See TODO in code.
+
+- Progress window display is all f-ed up (text boxes and progress label).
+
+- Before creating folders if they don't exist, we should check if sync is enabled in that direction.
