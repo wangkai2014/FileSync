@@ -3,6 +3,8 @@ A small program to keep your external storage in sync.
 
 # Future features and improvements
 
+- Turn computer off when done (or sleep, hibernate, execute powershell script, ...)
+
 - Show progress based on file size, not count (would be cool to get feedback as copy of single file progresses)
 
 - Split code in decent classes
