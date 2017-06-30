@@ -5,6 +5,8 @@ A small program to keep your external storage in sync.
 
 - Turn computer off when done (or sleep, hibernate, execute powershell script, ...)
 
+- Sync over network
+
 - Show progress based on file size, not count (would be cool to get feedback as copy of single file progresses)
 
 - Split code in decent classes
@@ -31,8 +33,4 @@ A small program to keep your external storage in sync.
 
 # Known bugs
 
-- If both external and internal drive are selected as the same drive (same root), conditional sync (internal to external or vice versa) will not work. See TODO in code.
-
-- Progress window display is all f-ed up (text boxes and progress label).
-
-- Before creating folders if they don't exist, we should check if sync is enabled in that direction.
+- Rewrite in progress, no known bugs yet.
