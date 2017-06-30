@@ -11,20 +11,20 @@ namespace FileSync
     /// Main class used to manage the syncing list.
     /// TODO: Consider having multiple lists. Shouldn't be needed in the initial use case of this program.
     /// </summary>
-    class ListManager
+    public class ListManager
     {
         #region Classes and enums
 
         /// <summary>
         /// Describes the way files must be synced.
-        /// TODO: Invalid values are possible (eg: ToDestination | ToDestinationWithDeletion). Might need fixing later.
+        /// TODO: Invalid values are possible (eg: ToDestination | ToDestinationWithDeletion). Not a big deal but might need fixing later.
         /// </summary>
         public enum CopyDirection
         {
-            ToDestination = 1,
-            ToSource = 2,
-            ToDestinationWithDeletion = 4,
-            ToSourceWithDeletion = 8
+            ToDestination = 1, // Copy from source to destination
+            ToSource = 2, // Copy from destination to source
+            DeleteAtDestination = 4, // Delete files that are in destination but not in source
+            DeleteAtSource = 8 // Delete files that are in source but not at destination
         }
 
         /// <summary>
@@ -81,6 +81,11 @@ namespace FileSync
 
                 s_syncList.Add(new SyncElement { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyDirection)Byte.Parse(line[3]) });
             }
+        }
+
+        private void WriteMapingsToFile()
+        {
+            File.WriteAllLines(s_listPath, s_syncList.Select(e => $"{e.SourcePath}|{e.DestinationPath}|{(byte)e.Direction}"));
         }
 
         #endregion
