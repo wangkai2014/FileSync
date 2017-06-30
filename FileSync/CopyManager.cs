@@ -12,14 +12,31 @@ namespace FileSync
     /// This class will handle the actual copy.
     /// TODO: To have more control and display a more accurate progress based on size, implement our own stream copier.
     /// </summary>
-    public class CopyManager
+    public sealed class CopyManager
     {
         #region Classes and enums
-        
+
+        /// <summary>
+        /// Describes the way files must be synced.
+        /// Invalid values are possible (eg: ToDestination | DeleteAtDestination), it's ok,
+        /// it's actually used to signal the end of a queue.
+        /// </summary>
+        public enum CopyDirection
+        {
+            ToDestination = 1, // Copy from source to destination
+            ToSource = 2, // Copy from destination to source
+            DeleteAtDestination = 4, // Delete files that are in destination but not in source
+            DeleteAtSource = 8 // Delete files that are in source but not at destination
+        }
+
         public class CopyWorkItem
         {
-            public ListManager.SyncElement SyncElement;
-            public bool IsDirectory; // True if the paths in SyncElement are directories
+            public string SourcePath;
+            public string DestinationPath;
+
+            public CopyDirection Direction;
+
+            public bool IsDirectory;
         }
 
         #endregion
@@ -74,37 +91,41 @@ namespace FileSync
 
             m_currentWorkItemsQueue = await m_workItemQueues.ReceiveAsync();
 
-            while (m_currentWorkItemsQueue.Count != 0)
+            while (true) // Consume the data until we get the end code
             {
                 var workItem = await m_currentWorkItemsQueue.ReceiveAsync();
 
-                var sourcePath = workItem.SyncElement.SourcePath;
-                var destinationPath = workItem.SyncElement.DestinationPath;
+                // This is our signal that we are done for this queue
+                if (workItem.Direction == (CopyDirection.DeleteAtDestination | CopyDirection.ToDestination))
+                    break;
 
-                switch (workItem.SyncElement.Direction)
+                var sourcePath = workItem.SourcePath;
+                var destinationPath = workItem.DestinationPath;
+
+                switch (workItem.Direction)
                 {
-                    case ListManager.CopyDirection.DeleteAtDestination:
+                    case CopyDirection.DeleteAtDestination:
                         if (workItem.IsDirectory)
                             Directory.Delete(destinationPath);
                         else
                             File.Delete(destinationPath);
                         break;
 
-                    case ListManager.CopyDirection.DeleteAtSource:
+                    case CopyDirection.DeleteAtSource:
                         if (workItem.IsDirectory)
                             Directory.Delete(sourcePath);
                         else
                             File.Delete(sourcePath);
                         break;
 
-                    case ListManager.CopyDirection.ToDestination:
+                    case CopyDirection.ToDestination:
                         if (workItem.IsDirectory)
                             Directory.CreateDirectory(destinationPath);
                         else
                             File.Copy(sourcePath, destinationPath);
                         break;
 
-                    case ListManager.CopyDirection.ToSource:
+                    case CopyDirection.ToSource:
                         if (workItem.IsDirectory)
                             Directory.CreateDirectory(sourcePath);
                         else

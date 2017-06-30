@@ -15,37 +15,17 @@ namespace FileSync
     {
         #region Classes and enums
 
-        /// <summary>
-        /// Describes the way files must be synced.
-        /// TODO: Invalid values are possible (eg: ToDestination | ToDestinationWithDeletion). Not a big deal but might need fixing later.
-        /// </summary>
-        public enum CopyDirection
-        {
-            ToDestination = 1, // Copy from source to destination
-            ToSource = 2, // Copy from destination to source
-            DeleteAtDestination = 4, // Delete files that are in destination but not in source
-            DeleteAtSource = 8 // Delete files that are in source but not at destination
-        }
-
-        /// <summary>
-        /// Representation of a path pair, with all the specific sync settings.
-        /// TODO: Find a better name... Please...
-        /// </summary>
-        public class SyncElement
-        {
-            public string SourcePath;
-            public string DestinationPath;
-
-            public CopyDirection Direction;
-        }
-
         #endregion
 
         #region Fields
 
         private static string s_listPath;
 
-        private static IList<SyncElement> s_syncList;
+        #endregion
+
+        #region Properties
+
+        public static IList<CopyManager.CopyWorkItem> SyncList { get; private set; }
 
         #endregion
 
@@ -64,7 +44,7 @@ namespace FileSync
 
         private static void LoadList()
         {
-            s_syncList = new List<SyncElement>();
+            SyncList = new List<CopyManager.CopyWorkItem>();
 
             if (!File.Exists(s_listPath))
             {
@@ -79,13 +59,13 @@ namespace FileSync
                 if (line.Length != 3)
                     continue;
 
-                s_syncList.Add(new SyncElement { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyDirection)Byte.Parse(line[3]) });
+                SyncList.Add(new CopyManager.CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyManager.CopyDirection)Byte.Parse(line[3]), IsDirectory = true });
             }
         }
 
         private void WriteMapingsToFile()
         {
-            File.WriteAllLines(s_listPath, s_syncList.Select(e => $"{e.SourcePath}|{e.DestinationPath}|{(byte)e.Direction}"));
+            File.WriteAllLines(s_listPath, SyncList.Select(e => $"{e.SourcePath}|{e.DestinationPath}|{(byte)e.Direction}"));
         }
 
         #endregion
