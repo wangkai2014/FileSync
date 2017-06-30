@@ -37,6 +37,16 @@ namespace FileSync
             public CopyDirection Direction;
 
             public bool IsDirectory;
+
+            public CopyWorkItem() { }
+
+            public CopyWorkItem(CopyWorkItem copyWorkItem)
+            {
+                this.SourcePath = copyWorkItem.SourcePath;
+                this.DestinationPath = copyWorkItem.DestinationPath;
+                this.Direction = copyWorkItem.Direction;
+                this.IsDirectory = copyWorkItem.IsDirectory;
+            }
         }
 
         #endregion
