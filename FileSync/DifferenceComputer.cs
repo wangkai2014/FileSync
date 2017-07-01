@@ -28,7 +28,7 @@ namespace FileSync
         /// fill the queue given as a parameter with the resulting copy work items.
         /// </summary>
         /// <param name="filesQueue"></param>
-        public void ComputeDifferences(BufferBlock<CopyManager.CopyWorkItem> filesQueue)
+        public void ComputeDifferences(BufferBlock<CopyWorkItem> filesQueue)
         {
             if (ListManager.SyncList == null)
                 throw new InvalidOperationException("ListManager is not initialized correctly.");
@@ -55,6 +55,9 @@ namespace FileSync
             bool destinationDirectoryExists = Directory.Exists(workItem.DestinationPath);
 
             if (!sourceDirectoryExists && !destinationDirectoryExists)
+                return;
+
+            if (!copyToSource && !copyToDestination) // ....
                 return;
 
             if (copyToSource)
@@ -86,7 +89,7 @@ namespace FileSync
 
             if (copyToDestination)
             {
-                // If we copy to destination and the current directory doesn't exist, we create it
+                // If we copy to destination and the current directory doesn't exist, we create it and automatically queue all the content
                 if (!destinationDirectoryExists)
                 {
                     var copyWorkItem = new CopyWorkItem(workItem);
@@ -102,13 +105,63 @@ namespace FileSync
                     var sourceFiles = Directory.EnumerateFiles(workItem.SourcePath, "*", SearchOption.AllDirectories);
                     foreach (var file in sourceFiles)
                     {
-                        // Generate the "source" version of the file's path
+                        // Generate the "destination" version of the file's path
                         var destinationPath = file.Replace(workItem.SourcePath, workItem.DestinationPath);
                         filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false });
                     }
 
                     return;
                 }
+            }
+
+            // If we made it here, both directories exist and we have to check files one by one and decide which should be copied.
+            // TODO: find a more efficient way to do that, I don't like it.
+            var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => Path.GetFileName(path));
+            var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly).Select(path => Path.GetFileName(path));
+
+            var commonFiles = filesInSource.Where(f => filesInDestination.Contains(f));
+
+            var sourceFilesToCopy = filesInSource.Where(f => !commonFiles.Contains(f));
+            var destinationFilesToCopy = filesInDestination.Where(f => !commonFiles.Contains(f));
+            // TODO: Actually, I hate it...
+
+            if (copyToDestination)
+            {
+                foreach (var file in sourceFilesToCopy)
+                {
+                    var destinationPath = file.Replace(workItem.SourcePath, workItem.DestinationPath);
+                    filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false });
+                }
+            }
+
+            if (copyToSource)
+            {
+                foreach (var file in destinationFilesToCopy)
+                {
+                    var sourcePath = file.Replace(workItem.DestinationPath, workItem.SourcePath);
+                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false });
+                }
+            }
+
+            // Now we handle the directories, recursively.
+            // Note that the path.replace is to allow for a good comparison between source and destination
+            var directoriesInSource = Directory.GetDirectories(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(workItem.SourcePath, workItem.DestinationPath));
+            var directoriesInDestination = Directory.GetDirectories(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
+
+            var commonDirectories = directoriesInSource.Where(f => directoriesInDestination.Contains(f));
+
+            var uniqueDestinationDirectories = directoriesInDestination.Where(f => !commonDirectories.Contains(f));
+
+            foreach (var directory in directoriesInSource)
+            {
+                var sourcePath = directory.Replace(workItem.DestinationPath, workItem.SourcePath);
+                ComputeDifferences(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = directory, Direction = workItem.Direction, IsDirectory = true }, filesQueue);
+            }
+
+            foreach (var directory in uniqueDestinationDirectories)
+            {
+                var sourcePath = directory.Replace(workItem.DestinationPath, workItem.SourcePath);
+                ComputeDifferences(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = directory, Direction = workItem.Direction, IsDirectory = true }, filesQueue);
             }
         }
 
