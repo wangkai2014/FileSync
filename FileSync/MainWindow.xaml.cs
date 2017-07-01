@@ -177,6 +177,16 @@ namespace FileSync
 
         private void SyncFiles()
         {
+            ListManager.Init(@"D:\Projects\FileSync\FileSync\testList.list");
+
+            var queue = new System.Threading.Tasks.Dataflow.BufferBlock<CopyManager.CopyWorkItem>();
+
+            DifferenceComputer.ComputeDifferences(queue);
+
+            CopyManager.Instance.HandleQueue(queue);
+
+
+            return;
             foreach (var pair in m_folderMapping)
             {
                 var differences = GetFoldersDifferences(pair);

@@ -28,7 +28,7 @@ namespace FileSync
         /// fill the queue given as a parameter with the resulting copy work items.
         /// </summary>
         /// <param name="filesQueue"></param>
-        public void ComputeDifferences(BufferBlock<CopyWorkItem> filesQueue)
+        public static void ComputeDifferences(BufferBlock<CopyWorkItem> filesQueue)
         {
             if (ListManager.SyncList == null)
                 throw new InvalidOperationException("ListManager is not initialized correctly.");
@@ -38,13 +38,15 @@ namespace FileSync
                 ComputeDifferences(element, filesQueue);
             }
 
+            // Once we are done, we send the "end of queue signal"
+            filesQueue.Post(new CopyWorkItem { Direction = (CopyDirection.DeleteAtDestination | CopyDirection.ToDestination) });
         }
 
         #endregion
 
         #region Private methods
 
-        private void ComputeDifferences(CopyWorkItem workItem, BufferBlock<CopyWorkItem> filesQueue)
+        private static void ComputeDifferences(CopyWorkItem workItem, BufferBlock<CopyWorkItem> filesQueue)
         {
             if (!workItem.IsDirectory)
                 return; // No code path should lead here
@@ -116,8 +118,8 @@ namespace FileSync
 
             // If we made it here, both directories exist and we have to check files one by one and decide which should be copied.
             // TODO: find a more efficient way to do that, I don't like it.
-            var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => Path.GetFileName(path));
-            var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly).Select(path => Path.GetFileName(path));
+            var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(workItem.SourcePath, workItem.DestinationPath));
+            var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
             var commonFiles = filesInSource.Where(f => filesInDestination.Contains(f));
 
@@ -129,8 +131,8 @@ namespace FileSync
             {
                 foreach (var file in sourceFilesToCopy)
                 {
-                    var destinationPath = file.Replace(workItem.SourcePath, workItem.DestinationPath);
-                    filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false });
+                    var sourcePath = file.Replace(workItem.DestinationPath, workItem.SourcePath);
+                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false });
                 }
             }
 

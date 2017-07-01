@@ -59,7 +59,7 @@ namespace FileSync
                 if (line.Length != 3)
                     continue;
 
-                SyncList.Add(new CopyManager.CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyManager.CopyDirection)Byte.Parse(line[3]), IsDirectory = true });
+                SyncList.Add(new CopyManager.CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyManager.CopyDirection)Byte.Parse(line[2]), IsDirectory = true });
             }
         }
 

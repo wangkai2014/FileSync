@@ -81,6 +81,11 @@ namespace FileSync
         /// <param name="queue"></param>
         public void HandleQueue(BufferBlock<CopyWorkItem> queue)
         {
+            if (m_workItemQueues == null)
+            {
+                m_workItemQueues = new BufferBlock<BufferBlock<CopyWorkItem>>();
+            }
+
             m_workItemQueues.Post(queue);
 
             if (m_copyTask == null || m_copyTask.IsCompleted)
