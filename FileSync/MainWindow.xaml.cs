@@ -22,25 +22,15 @@ namespace FileSync
 
         private ProgressWindow m_progressWindow;
         private List<PathPair> m_folderMapping;
-        private BackgroundWorker m_bw;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            LoadMappingsFromFile();
-
             m_syncToExternal = true;
             m_syncToInternal = true;
 
             m_progressWindow = new ProgressWindow();
-
-            m_bw = new BackgroundWorker();
-            m_bw.WorkerSupportsCancellation = true; // TODO: allow user cancellation from the copy window.
-            m_bw.WorkerReportsProgress = true;
-            m_bw.DoWork += new DoWorkEventHandler((s, args) => { SyncFiles(); });
-            m_bw.ProgressChanged += new ProgressChangedEventHandler(Copy_ProgressChanged);
-            m_bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Copy_RunWorkerCompleted);
         }
 
         #region Handlers
@@ -72,18 +62,11 @@ namespace FileSync
         private void RemoveMappingBtn_Click(object sender, RoutedEventArgs e)
         {
             m_folderMapping.RemoveAt(InternalPathsListBox.SelectedIndex);
-
-            ReloadMapList();
         }
 
         private void SyncNowBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (!m_bw.IsBusy)
-            {
-                m_progressWindow.CloseButton.IsEnabled = false;
-                m_progressWindow.Show();
-                m_bw.RunWorkerAsync();
-            }
+            SyncFiles();
         }
 
         private void Copy_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -129,158 +112,27 @@ namespace FileSync
         #endregion
 
         #region Private methods
-
-        private void LoadMappingsFromFile()
-        {
-            m_folderMapping = new List<PathPair>();
-            InternalPathsListBox.Items.Clear();
-            ExternalPathsListBox.Items.Clear();
-
-            if (!File.Exists(MapFileName))
-            {
-                File.Create(MapFileName).Close();
-                return;
-            }
-
-            var lines = File.ReadAllLines(MapFileName).Select(line => line.Split('|'));
-
-            foreach (var line in lines)
-            {
-                m_folderMapping.Add(new PathPair { LocalPathOrSource = line[0], ExternalPathOrDestination = line[1] });
-
-                InternalPathsListBox.Items.Add(new ListBoxItem { Content = line[0] });
-                ExternalPathsListBox.Items.Add(new ListBoxItem { Content = line[1] });
-            }
-        }
-
-        private void WriteAllMapsToFile()
-        {
-            File.WriteAllLines(MapFileName, m_folderMapping.Select(pair => $"{pair.LocalPathOrSource}|{pair.ExternalPathOrDestination}"));
-        }
-
+        
         private void AddPathMap(PathPair pair)
         {
             m_folderMapping.Add(pair);
 
             InternalPathsListBox.Items.Add(new ListBoxItem { Content = pair.LocalPathOrSource });
             ExternalPathsListBox.Items.Add(new ListBoxItem { Content = pair.ExternalPathOrDestination });
-
-            ReloadMapList();
         }
-
-        private void ReloadMapList()
-        {
-            WriteAllMapsToFile();
-
-            LoadMappingsFromFile();
-        }
-
+        
         private void SyncFiles()
         {
             ListManager.Init(@"D:\Projects\FileSync\FileSync\testList.list");
 
             var queue = new System.Threading.Tasks.Dataflow.BufferBlock<CopyManager.CopyWorkItem>();
 
-            DifferenceComputer.ComputeDifferences(queue);
+            System.Threading.Tasks.Task.Factory.StartNew(() => DifferenceComputer.ComputeDifferences(queue));
 
-            CopyManager.Instance.HandleQueue(queue);
-
-
-            return;
-            foreach (var pair in m_folderMapping)
-            {
-                var differences = GetFoldersDifferences(pair);
-
-                int copiedFiles = 0;
-
-                foreach (var difference in differences)
-                {
-                    // NOTE: This condition is useless if both source and destination are on the same disk.
-                    if (Path.GetPathRoot(difference.LocalPathOrSource) == Path.GetPathRoot(pair.LocalPathOrSource) && m_syncToExternal ||
-                        Path.GetPathRoot(difference.LocalPathOrSource) == Path.GetPathRoot(pair.ExternalPathOrDestination) && m_syncToInternal)
-                    {
-                        // Update UI to show the files that are beeing copied
-                        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
-                            m_progressWindow.SourceFileTextBox.Text = difference.LocalPathOrSource;
-                            m_progressWindow.DestinationFolderTextBox.Text = Path.GetDirectoryName(difference.ExternalPathOrDestination);
-                            m_progressWindow.FileCountLabel.Content = copiedFiles + "/" + differences.Count;
-                        }));
-
-                        File.Copy(difference.LocalPathOrSource, difference.ExternalPathOrDestination);
-                        copiedFiles++;
-                    }
-
-                    m_bw.ReportProgress(copiedFiles * 100 / differences.Count);
-                }
-
-                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() => {
-                    m_progressWindow.FileCountLabel.Content = copiedFiles + "/" + differences.Count;
-                }));
-            }
+            System.Threading.Tasks.Task.Factory.StartNew(() => CopyManager.Instance.HandleQueue(queue));
+            
         }
-
-        /// <summary>
-        /// Find files and dorectories that are not synced between the two folders in the pair.
-        /// </summary>
-        /// <param name="pair"></param>
-        /// <returns></returns>
-        private List<PathPair> GetFoldersDifferences(PathPair pair)
-        {
-            if (!Directory.Exists(pair.LocalPathOrSource))
-                Directory.CreateDirectory(pair.LocalPathOrSource);
-            if (!Directory.Exists(pair.ExternalPathOrDestination))
-                Directory.CreateDirectory(pair.ExternalPathOrDestination);
-
-            List<PathPair> differences = new List<PathPair>();
-
-            var localFiles = Directory.EnumerateFiles(pair.LocalPathOrSource).Select(path => Path.GetFileName(path)).ToList();
-            var externalFiles = Directory.EnumerateFiles(pair.ExternalPathOrDestination).Select(path => Path.GetFileName(path)).ToList();
-
-            var commonFiles = localFiles.Where(file => externalFiles.Contains(file)).ToList();
-
-            localFiles.RemoveAll(file => commonFiles.Contains(file));
-            externalFiles.RemoveAll(file => commonFiles.Contains(file));
-
-            foreach (var file in localFiles)
-            {
-                differences.Add(new PathPair { LocalPathOrSource = Path.Combine(pair.LocalPathOrSource, file), ExternalPathOrDestination = Path.Combine(pair.ExternalPathOrDestination, file) });
-            }
-
-            foreach (var file in externalFiles)
-            {
-                differences.Add(new PathPair { LocalPathOrSource = Path.Combine(pair.ExternalPathOrDestination, file), ExternalPathOrDestination = Path.Combine(pair.LocalPathOrSource, file) });
-            }
-
-            // Recursively handle folders
-            //if (RecursiveCheckBox.IsChecked.Value)
-            {
-                var localFolders = Directory.EnumerateDirectories(pair.LocalPathOrSource);
-                var externalFolders = Directory.EnumerateDirectories(pair.ExternalPathOrDestination);
-
-                foreach (var folder in localFolders)
-                {
-                    differences.AddRange(GetFoldersDifferences(
-                        new PathPair
-                        {
-                            LocalPathOrSource = folder,
-                            ExternalPathOrDestination = Path.Combine(pair.ExternalPathOrDestination, Path.GetFileName(folder))
-                        }));
-                }
-
-                foreach (var folder in externalFolders)
-                {
-                    differences.AddRange(GetFoldersDifferences(
-                        new PathPair
-                        {
-                            LocalPathOrSource = Path.Combine(pair.LocalPathOrSource, Path.GetFileName(folder)),
-                            ExternalPathOrDestination = folder
-                        }));
-                }
-            }
-
-            return differences;
-        }
-
+        
         #endregion
     }
 }
