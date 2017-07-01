@@ -223,8 +223,8 @@ namespace FileSync
 
             List<PathPair> differences = new List<PathPair>();
 
-            var localFiles = Directory.GetFiles(pair.LocalPathOrSource).Select(path => Path.GetFileName(path)).ToList();
-            var externalFiles = Directory.GetFiles(pair.ExternalPathOrDestination).Select(path => Path.GetFileName(path)).ToList();
+            var localFiles = Directory.EnumerateFiles(pair.LocalPathOrSource).Select(path => Path.GetFileName(path)).ToList();
+            var externalFiles = Directory.EnumerateFiles(pair.ExternalPathOrDestination).Select(path => Path.GetFileName(path)).ToList();
 
             var commonFiles = localFiles.Where(file => externalFiles.Contains(file)).ToList();
 
@@ -244,8 +244,8 @@ namespace FileSync
             // Recursively handle folders
             //if (RecursiveCheckBox.IsChecked.Value)
             {
-                var localFolders = Directory.GetDirectories(pair.LocalPathOrSource).ToList();
-                var externalFolders = Directory.GetDirectories(pair.ExternalPathOrDestination).ToList();
+                var localFolders = Directory.EnumerateDirectories(pair.LocalPathOrSource);
+                var externalFolders = Directory.EnumerateDirectories(pair.ExternalPathOrDestination);
 
                 foreach (var folder in localFolders)
                 {
