@@ -5,6 +5,8 @@ A small program to keep your external storage in sync.
 
 - Have an actual UI...
 
+- Check for available space before copying
+
 - Turn computer off when done (or sleep, hibernate, execute powershell script, ...)
 
 - Sync over network
