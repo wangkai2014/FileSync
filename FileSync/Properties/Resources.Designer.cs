@@ -22,7 +22,7 @@ namespace FileSync.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace FileSync.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileSync.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace FileSync.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,18 +63,27 @@ namespace FileSync.Properties {
         /// <summary>
         ///   Looks up a localized string similar to mappings.list.
         /// </summary>
-        internal static string DefaultMapPath {
+        public static string DefaultMapPath {
             get {
                 return ResourceManager.GetString("DefaultMapPath", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Will copy all elements from left that are missing in right from left to right and vice versa.
+        /// </summary>
+        public static string FullSyncDescription {
+            get {
+                return ResourceManager.GetString("FullSyncDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap FullSync {
+        public static System.Drawing.Bitmap FullSyncIcon {
             get {
-                object obj = ResourceManager.GetObject("FullSync", resourceCulture);
+                object obj = ResourceManager.GetObject("FullSyncIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -82,48 +91,93 @@ namespace FileSync.Properties {
         /// <summary>
         ///   Looks up a localized string similar to settings.
         /// </summary>
-        internal static string SettingsFilePath {
+        public static string SettingsFilePath {
             get {
                 return ResourceManager.GetString("SettingsFilePath", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to Left click to change this value.
         /// </summary>
-        internal static System.Drawing.Bitmap SyncToLeft {
+        public static string SyncIconTooltip {
             get {
-                object obj = ResourceManager.GetObject("SyncToLeft", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("SyncIconTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Will copy all elements from right that are missing in left from right to left.
+        /// </summary>
+        public static string SyncToLeftDescription {
+            get {
+                return ResourceManager.GetString("SyncToLeftDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SyncToLeftWithDeletion {
+        public static System.Drawing.Bitmap SyncToLeftIcon {
             get {
-                object obj = ResourceManager.GetObject("SyncToLeftWithDeletion", resourceCulture);
+                object obj = ResourceManager.GetObject("SyncToLeftIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Will copy all elements from right that are missing in left from right to left and delete all elements that are present in left but not in right.
+        /// </summary>
+        public static string SyncToLeftWithDeletionDescription {
+            get {
+                return ResourceManager.GetString("SyncToLeftWithDeletionDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SyncToRight {
+        public static System.Drawing.Bitmap SyncToLeftWithDeletionIcon {
             get {
-                object obj = ResourceManager.GetObject("SyncToRight", resourceCulture);
+                object obj = ResourceManager.GetObject("SyncToLeftWithDeletionIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Will copy all elements from left that are missing in right from left to right.
+        /// </summary>
+        public static string SyncToRightDescription {
+            get {
+                return ResourceManager.GetString("SyncToRightDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SyncToRightWithDeletion {
+        public static System.Drawing.Bitmap SyncToRightIcon {
             get {
-                object obj = ResourceManager.GetObject("SyncToRightWithDeletion", resourceCulture);
+                object obj = ResourceManager.GetObject("SyncToRightIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Will copy all elements from left that are missing in right from left to right and delete all elements that are present in right but not in left.
+        /// </summary>
+        public static string SyncToRightWithDeletionDescription {
+            get {
+                return ResourceManager.GetString("SyncToRightWithDeletionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SyncToRightWithDeletionIcon {
+            get {
+                object obj = ResourceManager.GetObject("SyncToRightWithDeletionIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

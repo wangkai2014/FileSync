@@ -26,31 +26,14 @@ namespace FileSync
 
         #region Handlers
 
-        private void LoadOtherListBtnBtn_Click(object sender, RoutedEventArgs e)
+        private void LoadOtherListBtn_Click(object sender, RoutedEventArgs e)
         {
             throw new NotImplementedException();
         }
 
         private void AddMappingBtn_Click(object sender, RoutedEventArgs e)
         {
-            //var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            //dialog.Description = "Select the directory on your INTERNAL drive";
-            //dialog.ShowDialog();
-            //if (String.IsNullOrEmpty(dialog.SelectedPath))
-            //    return;
-            //var paths = new PathPair();
-            //paths.LocalPathOrSource = dialog.SelectedPath;
-            //dialog.Description = "Select the directory on your EXTERNAL drive";
-            //dialog.ShowDialog();
-            //if (dialog.SelectedPath == paths.LocalPathOrSource)
-            //    return;
-            //paths.ExternalPathOrDestination = dialog.SelectedPath;
-
-            //var root = Path.GetPathRoot(paths.ExternalPathOrDestination);
-            
-            //// Make the external path relative, assuming that the program's directory is at the external drive's root.
-            //paths.ExternalPathOrDestination = paths.ExternalPathOrDestination.Remove(0, root.Length);
-            //paths.ExternalPathOrDestination = Path.Combine("..", paths.ExternalPathOrDestination);
+            throw new NotImplementedException();
         }
 
         private void RemoveMappingBtn_Click(object sender, RoutedEventArgs e)
@@ -83,30 +66,7 @@ namespace FileSync
 
             foreach (var item in list)
             {
-                System.Drawing.Image syncIcon;
-
-                switch (item.Direction)
-                {
-                    case CopyManager.CopyDirection.ToDestination:
-                        syncIcon = Res.SyncToRight;
-                        break;
-                    case CopyManager.CopyDirection.ToSource:
-                        syncIcon = Res.SyncToLeft;
-                        break;
-                    case CopyManager.CopyDirection.DeleteAtDestination:
-                        syncIcon = Res.SyncToRightWithDeletion;
-                        break;
-                    case CopyManager.CopyDirection.DeleteAtSource:
-                        syncIcon = Res.SyncToLeftWithDeletion;
-                        break;
-                    case CopyManager.CopyDirection.ToDestination | CopyManager.CopyDirection.ToSource:
-                        syncIcon = Res.FullSync;
-                        break;
-                    default:
-                        throw new InvalidOperationException("Unexpected copy direction.");
-                }
-
-                context.AddRow(item.SourcePath, item.DestinationPath, syncIcon);
+                context.AddRow(item.SourcePath, item.DestinationPath, item.Direction);
             }
         }
 
@@ -127,6 +87,11 @@ namespace FileSync
         #endregion
 
         private void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void SyncIcon_RightMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Application.Current.Shutdown();
         }

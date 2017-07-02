@@ -121,24 +121,42 @@
     <value>mappings.list</value>
     <comment>The default mapping list path.</comment>
   </data>
+  <data name="FullSyncDescription" xml:space="preserve">
+    <value>Will copy all elements from left that are missing in right from left to right and vice versa</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="FullSync" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="FullSyncIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FullSync.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SettingsFilePath" xml:space="preserve">
     <value>settings</value>
     <comment>Path to the XML file storing settings.</comment>
   </data>
-  <data name="SyncToLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="SyncIconTooltip" xml:space="preserve">
+    <value>Left click to change this value</value>
+  </data>
+  <data name="SyncToLeftDescription" xml:space="preserve">
+    <value>Will copy all elements from right that are missing in left from right to left</value>
+  </data>
+  <data name="SyncToLeftIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SyncToLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SyncToLeftWithDeletion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="SyncToLeftWithDeletionDescription" xml:space="preserve">
+    <value>Will copy all elements from right that are missing in left from right to left and delete all elements that are present in left but not in right</value>
+  </data>
+  <data name="SyncToLeftWithDeletionIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SyncToLeftWithDeletion.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SyncToRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="SyncToRightDescription" xml:space="preserve">
+    <value>Will copy all elements from left that are missing in right from left to right</value>
+  </data>
+  <data name="SyncToRightIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\syncToRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SyncToRightWithDeletion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="SyncToRightWithDeletionDescription" xml:space="preserve">
+    <value>Will copy all elements from left that are missing in right from left to right and delete all elements that are present in right but not in left</value>
+  </data>
+  <data name="SyncToRightWithDeletionIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SyncToRightWithDeletion.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

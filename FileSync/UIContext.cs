@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using Res = FileSync.Properties.Resources;
 
 namespace FileSync
 {
     public class UIContext
     {
         #region Classes
-
+        
         public class MappingRow : INotifyPropertyChanged
         {
             #region Fields
 
             private string m_leftPath;
-            private BitmapImage m_syncIcon;
+            private Image m_syncIcon;
             private string m_rightPath;
 
             #endregion
@@ -39,7 +38,7 @@ namespace FileSync
                 }
             }
 
-            public BitmapImage SyncIcon
+            public Image SyncIcon
             {
                 get
                 {
@@ -105,32 +104,33 @@ namespace FileSync
 
         #region Public methods
 
-        public void AddRow(string left, string right, Image icon)
+        public void AddRow(string left, string right, CopyManager.CopyDirection direction)
         {
-            MappingRows.Add(new MappingRow { LeftPath = left, RightPath = right, SyncIcon = ConvertToImageSource(icon) });
-        }
 
-        #endregion
+            System.Drawing.Image syncIcon;
 
-        #region Private methods
+            switch (direction)
+            {
+                case CopyManager.CopyDirection.ToDestination:
+                    syncIcon = Res.SyncToRightIcon;
+                    break;
+                case CopyManager.CopyDirection.ToSource:
+                    syncIcon = Res.SyncToLeftIcon;
+                    break;
+                case CopyManager.CopyDirection.DeleteAtDestination:
+                    syncIcon = Res.SyncToRightWithDeletionIcon;
+                    break;
+                case CopyManager.CopyDirection.DeleteAtSource:
+                    syncIcon = Res.SyncToLeftWithDeletionIcon;
+                    break;
+                case CopyManager.CopyDirection.ToDestination | CopyManager.CopyDirection.ToSource:
+                    syncIcon = Res.FullSyncIcon;
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected copy direction.");
+            }
 
-        /// <summary>
-        /// This is kinda stupid, MappingRow.SyncIcon could just be a path to the image on the disk.
-        /// Instead we use the images we have in our resources and convert them every time we use them.
-        /// </summary>
-        /// <param name="image"></param>
-        /// <returns></returns>
-        private BitmapImage ConvertToImageSource(Image image)
-        {
-            MemoryStream ms = new MemoryStream();
-            ((System.Drawing.Bitmap)image).Save(ms, image.RawFormat);
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            ms.Seek(0, SeekOrigin.Begin);
-            img.StreamSource = ms;
-            img.EndInit();
-
-            return img;
+            MappingRows.Add(new MappingRow { LeftPath = left, RightPath = right, SyncIcon = syncIcon });
         }
 
         #endregion

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSync"
+        xmlns:p="clr-namespace:FileSync.Properties"
         mc:Ignorable="d"
         Title="FileSync" Height="263.079" Width="410.425"
         ResizeMode="NoResize"
@@ -11,18 +12,87 @@
     <Window.DataContext>
         <local:UIContext/>
     </Window.DataContext>
+    <Window.Resources>
+        <local:WPFBitmapConverter x:Key="ImageConverter"/>
+    </Window.Resources>
     <Grid>
-        <Button Name="AddMappingBtn" Content="Add" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="318,37,0,0" Click="AddMappingBtn_Click"/>
-        <Button Name="RemoveMappingBtn" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="318,62,0,0" Click="RemoveMappingBtn_Click"/>
-        <Button Name="SyncAllBtn" Content="Sync all" HorizontalAlignment="Left" Margin="318,197,0,0" VerticalAlignment="Top" Width="70" Click="SyncAllBtn_Click"/>
-        <Button Name="LoadOtherListBtn" Content="Load list" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="318,12,0,0" Click="LoadOtherListBtnBtn_Click"/>
-        <DataGrid Name="MappingsDataGrid" ItemsSource="{Binding Path=MappingRows}" HorizontalAlignment="Left" Height="207" Margin="10,10,0,0" VerticalAlignment="Top" Width="303" AutoGenerateColumns="False">
+        <Button Name="AddMappingBtn" 
+                Content="Add" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" 
+                Width="70" 
+                Margin="318,37,0,0" 
+                Click="AddMappingBtn_Click"/>
+        <Button Name="RemoveMappingBtn" 
+                Content="Remove" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" 
+                Width="70" 
+                Margin="318,62,0,0" 
+                Click="RemoveMappingBtn_Click"/>
+        <Button Name="SyncAllBtn" 
+                Content="Sync all" 
+                HorizontalAlignment="Left" 
+                Margin="318,197,0,0" 
+                VerticalAlignment="Top" 
+                Width="70" 
+                Click="SyncAllBtn_Click"/>
+        <Button Name="LoadOtherListBtn" 
+                Content="Load list" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" 
+                Width="70" 
+                Margin="318,12,0,0" 
+                Click="LoadOtherListBtn_Click"/>
+        <DataGrid Name="MappingsDataGrid" 
+                  ItemsSource="{Binding Path=MappingRows}" 
+                  HorizontalAlignment="Left" 
+                  Height="207" Margin="10,10,0,0" 
+                  VerticalAlignment="Top" 
+                  Width="303" 
+                  AutoGenerateColumns="False" 
+                  IsReadOnly="True" 
+                  SelectionMode="Extended" 
+                  SelectionUnit="Cell" 
+                  CanUserReorderColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Left" Binding="{Binding LeftPath}" />
+                <DataGridTextColumn Header="Left" Binding="{Binding LeftPath}"/>
                 <DataGridTemplateColumn Header="&lt;&gt;" Width="SizeToHeader" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding SyncIcon}" Stretch="Uniform"></Image>
+                            <Image Source="{Binding Path=SyncIcon, Converter={StaticResource ImageConverter}}"
+                                   Stretch="Uniform" 
+                                   ToolTip="{x:Static p:Resources.SyncIconTooltip}">
+                                <Image.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Full sync" ToolTip="{x:Static p:Resources.FullSyncDescription}">
+                                            <MenuItem.Icon>
+                                                <Image Source="{Binding Source={x:Static p:Resources.FullSyncIcon}, Converter={StaticResource ImageConverter}}"></Image>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Sync to right" ToolTip="{x:Static p:Resources.SyncToRightDescription}">
+                                            <MenuItem.Icon>
+                                                <Image Source="{Binding Source={x:Static p:Resources.SyncToRightIcon}, Converter={StaticResource ImageConverter}}"></Image>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Sync to left" ToolTip="{x:Static p:Resources.SyncToLeftDescription}">
+                                            <MenuItem.Icon>
+                                                <Image Source="{Binding Source={x:Static p:Resources.SyncToLeftIcon}, Converter={StaticResource ImageConverter}}"></Image>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Sync to right with deletion" ToolTip="{x:Static p:Resources.SyncToRightWithDeletionDescription}">
+                                            <MenuItem.Icon>
+                                                <Image Source="{Binding Source={x:Static p:Resources.SyncToRightWithDeletionIcon}, Converter={StaticResource ImageConverter}}"></Image>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Sync to left with deletion" ToolTip="{x:Static p:Resources.SyncToLeftWithDeletionDescription}">
+                                            <MenuItem.Icon>
+                                                <Image Source="{Binding Source={x:Static p:Resources.SyncToLeftWithDeletionIcon}, Converter={StaticResource ImageConverter}}"></Image>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </Image.ContextMenu>
+                            </Image>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
