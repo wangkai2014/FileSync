@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:FileSync"
         mc:Ignorable="d"
         Title="FileSync" Height="263.079" Width="410.425"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Closed="Window_Closed">
     <Window.DataContext>
         <local:UIContext/>
     </Window.DataContext>

@@ -10,6 +10,8 @@ namespace FileSync
 {
     /// <summary>
     /// This class will handle the actual copy.
+    /// It is a singleton because this program is very IO intensive and having multiple copies simultaneously on
+    /// the same (physical) drive is often not desirable.
     /// TODO: To have more control and display a more accurate progress based on size, implement our own stream copier.
     /// </summary>
     public sealed class CopyManager
@@ -18,19 +20,21 @@ namespace FileSync
 
         /// <summary>
         /// Describes the way files must be synced.
-        /// Invalid values are possible (eg: ToDestination | DeleteAtDestination), it's ok,
+        /// Unused values are possible (eg: ToDestination | DeleteAtDestination), it's ok,
         /// it's actually used to signal the end of a queue.
         /// </summary>
         public enum CopyDirection
         {
             ToDestination = 1, // Copy from source to destination
             ToSource = 2, // Copy from destination to source
-            DeleteAtDestination = 4, // Delete files that are in destination but not in source
-            DeleteAtSource = 8 // Delete files that are in source but not at destination
+            DeleteAtDestination = 4, // Delete files that are [in destination but not in source]
+            DeleteAtSource = 8 // Delete files that are [in source but not at destination]
         }
 
         public class CopyWorkItem
         {
+            #region Fields
+
             public string SourcePath;
             public string DestinationPath;
 
@@ -38,8 +42,16 @@ namespace FileSync
 
             public bool IsDirectory;
 
+            #endregion
+
+            #region Constructors
+
             public CopyWorkItem() { }
 
+            /// <summary>
+            /// Copy constructor.
+            /// </summary>
+            /// <param name="copyWorkItem">The object to copy from.</param>
             public CopyWorkItem(CopyWorkItem copyWorkItem)
             {
                 this.SourcePath = copyWorkItem.SourcePath;
@@ -47,6 +59,8 @@ namespace FileSync
                 this.Direction = copyWorkItem.Direction;
                 this.IsDirectory = copyWorkItem.IsDirectory;
             }
+
+            #endregion
         }
 
         #endregion
@@ -66,6 +80,8 @@ namespace FileSync
 
         #region Fields
 
+        // We can have multiple queues to handle (or the same one multiple times, 
+        // eg. if there is an end of queue signal in the middle).
         private BufferBlock<BufferBlock<CopyWorkItem>> m_workItemQueues;
         private BufferBlock<CopyWorkItem> m_currentWorkItemsQueue;
 

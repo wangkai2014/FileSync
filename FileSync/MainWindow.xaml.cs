@@ -77,6 +77,8 @@ namespace FileSync
         {
             var context = (DataContext as UIContext);
 
+            context.MappingRows.Clear();
+
             var list = ListManager.SyncList;
 
             foreach (var item in list)
@@ -106,8 +108,6 @@ namespace FileSync
 
                 context.AddRow(item.SourcePath, item.DestinationPath, syncIcon);
             }
-
-            //throw new NotImplementedException();
         }
 
         #endregion
@@ -122,10 +122,13 @@ namespace FileSync
 
             System.Threading.Tasks.Task.Factory.StartNew(() => CopyManager.Instance.HandleQueue(queue));
 
-            throw new NotImplementedException();
-
         }
 
         #endregion
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }
