@@ -128,6 +128,9 @@
   <data name="FullSyncIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FullSync.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="PathsFontSize" xml:space="preserve">
+    <value>15</value>
+  </data>
   <data name="SettingsFilePath" xml:space="preserve">
     <value>settings</value>
     <comment>Path to the XML file storing settings.</comment>

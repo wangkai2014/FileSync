@@ -14,6 +14,7 @@
     </Window.DataContext>
     <Window.Resources>
         <local:WPFBitmapConverter x:Key="ImageConverter"/>
+        <local:StringToIntWPFConverter x:Key="StringToIntConverter"/>
     </Window.Resources>
     <Grid>
         <Button Name="AddMappingBtn" 
@@ -58,7 +59,13 @@
                   CanUserReorderColumns="False"
                   SelectionChanged="MappingsDataGrid_Selected">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Left" Binding="{Binding LeftPath}"/>
+                <DataGridTemplateColumn Header="Left">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock MouseDown="LeftTextBlock_MouseDown" Text="{Binding LeftPath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSize}, Converter={StaticResource StringToIntConverter}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="&lt;&gt;" Width="SizeToHeader" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -98,7 +105,13 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Right" Binding="{Binding RightPath}" />
+                <DataGridTemplateColumn Header="Right">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock MouseDown="RightTextBlock_MouseDown" Text="{Binding RightPath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSize}, Converter={StaticResource StringToIntConverter}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

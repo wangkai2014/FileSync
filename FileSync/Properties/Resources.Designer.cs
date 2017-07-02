@@ -89,6 +89,15 @@ namespace FileSync.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 15.
+        /// </summary>
+        public static string PathsFontSize {
+            get {
+                return ResourceManager.GetString("PathsFontSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to settings.
         /// </summary>
         public static string SettingsFilePath {

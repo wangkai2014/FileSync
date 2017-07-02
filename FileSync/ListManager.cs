@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static FileSync.CopyManager;
 
 namespace FileSync
 {
@@ -47,9 +46,9 @@ namespace FileSync
         /// <param name="sourcePath">Must not be a directory.</param>
         /// <param name="destinationPath">Must not be a directory.</param>
         /// <param name="direction"></param>
-        public static void AddEntry(string sourcePath, string destinationPath, CopyManager.CopyDirection direction)
+        public static void AddEntry(string sourcePath, string destinationPath, CopyDirection direction)
         {
-            s_syncList.Add(new CopyManager.CopyWorkItem { SourcePath = sourcePath, DestinationPath = destinationPath, Direction = direction, IsDirectory = true });
+            s_syncList.Add(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = destinationPath, Direction = direction, IsDirectory = true });
         }
 
         /// <summary>
@@ -69,8 +68,8 @@ namespace FileSync
         /// <param name="index"></param>
         /// <param name="sourcePath">Not changed if null.</param>
         /// <param name="destinationPath">Not changed if null.</param>
-        /// <param name="copyDirection"></param>
-        public static void EditEntry(int index, string sourcePath, string destinationPath, CopyManager.CopyDirection copyDirection)
+        /// <param name="copyDirection">Optional.</param>
+        public static void EditEntry(int index, string sourcePath, string destinationPath, CopyDirection copyDirection = CopyDirection.ToDestination | CopyDirection.DeleteAtDestination)
         {
             s_syncList[index].Direction = copyDirection;
                 
@@ -95,7 +94,7 @@ namespace FileSync
 
         private static void LoadList()
         {
-            s_syncList = new List<CopyManager.CopyWorkItem>();
+            s_syncList = new List<CopyWorkItem>();
 
             if (!File.Exists(s_listPath))
             {
@@ -110,7 +109,7 @@ namespace FileSync
                 if (line.Length != 3)
                     continue;
 
-                s_syncList.Add(new CopyManager.CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyManager.CopyDirection)Byte.Parse(line[2]), IsDirectory = true });
+                s_syncList.Add(new CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyDirection)Byte.Parse(line[2]), IsDirectory = true });
             }
         }
 

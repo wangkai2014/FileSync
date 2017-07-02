@@ -143,5 +143,21 @@ namespace FileSync
 
             SaveBtn.IsEnabled = false;
         }
+
+        private void LeftTextBlock_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed || e.ClickCount != 2)
+                return;
+
+            Application.Current.Shutdown();
+        }
+
+        private void RightTextBlock_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed || e.ClickCount != 2)
+                return;
+
+            Application.Current.Shutdown();
+        }
     }
 }
