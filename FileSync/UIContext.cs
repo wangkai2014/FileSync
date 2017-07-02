@@ -106,7 +106,18 @@ namespace FileSync
 
         public void AddRow(string left, string right, CopyManager.CopyDirection direction)
         {
+            MappingRows.Add(new MappingRow { LeftPath = left, RightPath = right, SyncIcon = GetIconFromDirection(direction) });
+        }
 
+        public void UpdateRowDirectionIcon(int index, CopyManager.CopyDirection newDirection)
+        {
+            MappingRows[index].SyncIcon = GetIconFromDirection(newDirection);
+        }
+
+        #endregion
+
+        private Image GetIconFromDirection(CopyManager.CopyDirection direction)
+        {
             System.Drawing.Image syncIcon;
 
             switch (direction)
@@ -130,9 +141,7 @@ namespace FileSync
                     throw new InvalidOperationException("Unexpected copy direction.");
             }
 
-            MappingRows.Add(new MappingRow { LeftPath = left, RightPath = right, SyncIcon = syncIcon });
+            return syncIcon;
         }
-
-        #endregion
     }
 }

@@ -12,6 +12,8 @@ namespace FileSync
     {
         private ProgressWindow m_progressWindow;
 
+        private int m_lastSelectedRowIndex;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -90,10 +92,56 @@ namespace FileSync
         {
             Application.Current.Shutdown();
         }
-
-        private void SyncIcon_RightMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        
+        private void FullSyncMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.ToDestination | CopyManager.CopyDirection.ToSource);
+        }
+
+        private void SyncToRightMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.ToDestination);
+        }
+
+        private void SyncToLeftMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.ToSource);
+        }
+
+        private void SyncToRightWithDeletionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.DeleteAtDestination);
+        }
+
+        private void SyncToLeftWithDeletionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.DeleteAtSource);
+        }
+
+        private void ChangeSyncMehtod(int index, CopyManager.CopyDirection newCopyDirection)
+        {
+            var context = this.DataContext as UIContext;
+
+            if (context == null)
+                return;
+
+            context.UpdateRowDirectionIcon(index, newCopyDirection);
+
+            ListManager.EditEntry(index, null, null, newCopyDirection);
+
+            SaveBtn.IsEnabled = true;
+        }
+
+        private void MappingsDataGrid_Selected(object sender, RoutedEventArgs e)
+        {
+            m_lastSelectedRowIndex = MappingsDataGrid.SelectedIndex;
+        }
+
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ListManager.CommitChanges();
+
+            SaveBtn.IsEnabled = false;
         }
     }
 }

@@ -21,14 +21,14 @@
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
                 Width="70" 
-                Margin="318,37,0,0" 
+                Margin="318,10,0,0" 
                 Click="AddMappingBtn_Click"/>
         <Button Name="RemoveMappingBtn" 
                 Content="Remove" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
                 Width="70" 
-                Margin="318,62,0,0" 
+                Margin="318,35,0,0" 
                 Click="RemoveMappingBtn_Click"/>
         <Button Name="SyncAllBtn" 
                 Content="Sync all" 
@@ -37,13 +37,14 @@
                 VerticalAlignment="Top" 
                 Width="70" 
                 Click="SyncAllBtn_Click"/>
-        <Button Name="LoadOtherListBtn" 
-                Content="Load list" 
+        <Button Name="SaveBtn" 
+                Content="Save" 
+                IsEnabled="False"
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
                 Width="70" 
-                Margin="318,12,0,0" 
-                Click="LoadOtherListBtn_Click"/>
+                Margin="318,60,0,0" 
+                Click="SaveBtn_Click"/>
         <DataGrid Name="MappingsDataGrid" 
                   ItemsSource="{Binding Path=MappingRows}" 
                   HorizontalAlignment="Left" 
@@ -54,7 +55,8 @@
                   IsReadOnly="True" 
                   SelectionMode="Extended" 
                   SelectionUnit="Cell" 
-                  CanUserReorderColumns="False">
+                  CanUserReorderColumns="False"
+                  SelectionChanged="MappingsDataGrid_Selected">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Left" Binding="{Binding LeftPath}"/>
                 <DataGridTemplateColumn Header="&lt;&gt;" Width="SizeToHeader" IsReadOnly="True">
@@ -65,27 +67,27 @@
                                    ToolTip="{x:Static p:Resources.SyncIconTooltip}">
                                 <Image.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Full sync" ToolTip="{x:Static p:Resources.FullSyncDescription}">
+                                        <MenuItem Header="Full sync" ToolTip="{x:Static p:Resources.FullSyncDescription}" Click="FullSyncMenuItem_Click">
                                             <MenuItem.Icon>
                                                 <Image Source="{Binding Source={x:Static p:Resources.FullSyncIcon}, Converter={StaticResource ImageConverter}}"></Image>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="Sync to right" ToolTip="{x:Static p:Resources.SyncToRightDescription}">
+                                        <MenuItem Header="Sync to right" ToolTip="{x:Static p:Resources.SyncToRightDescription}" Click="SyncToRightMenuItem_Click">
                                             <MenuItem.Icon>
                                                 <Image Source="{Binding Source={x:Static p:Resources.SyncToRightIcon}, Converter={StaticResource ImageConverter}}"></Image>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="Sync to left" ToolTip="{x:Static p:Resources.SyncToLeftDescription}">
+                                        <MenuItem Header="Sync to left" ToolTip="{x:Static p:Resources.SyncToLeftDescription}" Click="SyncToLeftMenuItem_Click">
                                             <MenuItem.Icon>
                                                 <Image Source="{Binding Source={x:Static p:Resources.SyncToLeftIcon}, Converter={StaticResource ImageConverter}}"></Image>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="Sync to right with deletion" ToolTip="{x:Static p:Resources.SyncToRightWithDeletionDescription}">
+                                        <MenuItem Header="Sync to right with deletion" ToolTip="{x:Static p:Resources.SyncToRightWithDeletionDescription}" Click="SyncToRightWithDeletionMenuItem_Click">
                                             <MenuItem.Icon>
                                                 <Image Source="{Binding Source={x:Static p:Resources.SyncToRightWithDeletionIcon}, Converter={StaticResource ImageConverter}}"></Image>
                                             </MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="Sync to left with deletion" ToolTip="{x:Static p:Resources.SyncToLeftWithDeletionDescription}">
+                                        <MenuItem Header="Sync to left with deletion" ToolTip="{x:Static p:Resources.SyncToLeftWithDeletionDescription}" Click="SyncToLeftWithDeletionMenuItem_Click">
                                             <MenuItem.Icon>
                                                 <Image Source="{Binding Source={x:Static p:Resources.SyncToLeftWithDeletionIcon}, Converter={StaticResource ImageConverter}}"></Image>
                                             </MenuItem.Icon>

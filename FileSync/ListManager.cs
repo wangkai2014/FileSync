@@ -64,6 +64,24 @@ namespace FileSync
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="sourcePath">Not changed if null.</param>
+        /// <param name="destinationPath">Not changed if null.</param>
+        /// <param name="copyDirection"></param>
+        public static void EditEntry(int index, string sourcePath, string destinationPath, CopyManager.CopyDirection copyDirection)
+        {
+            s_syncList[index].Direction = copyDirection;
+                
+            if (!String.IsNullOrEmpty(sourcePath))
+                s_syncList[index].SourcePath = sourcePath;
+
+            if (!String.IsNullOrEmpty(destinationPath))
+                s_syncList[index].DestinationPath = destinationPath;
+        }
+
+        /// <summary>
         /// Sounds fancy but actually just flushes the content of the list to the file.
         /// </summary>
         public static void CommitChanges()
