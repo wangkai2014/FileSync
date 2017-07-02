@@ -25,8 +25,6 @@ A small program to keep your external storage in sync.
 
 - Keep an history of last few syncs in case we lose something (at least we would know who to blame...)
 
-- Add an icon
-
 # Known bugs
 
 - Rewrite in progress, no known bugs yet.
