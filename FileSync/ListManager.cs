@@ -21,11 +21,13 @@ namespace FileSync
 
         private static string s_listPath;
 
+        private static IList<CopyManager.CopyWorkItem> m_syncList;
+
         #endregion
 
         #region Properties
 
-        public static IList<CopyManager.CopyWorkItem> SyncList { get; private set; }
+        public static IList<CopyManager.CopyWorkItem> SyncList => m_syncList.ToList(); // Return a copy
 
         #endregion
 
@@ -44,7 +46,7 @@ namespace FileSync
 
         private static void LoadList()
         {
-            SyncList = new List<CopyManager.CopyWorkItem>();
+            m_syncList = new List<CopyManager.CopyWorkItem>();
 
             if (!File.Exists(s_listPath))
             {
@@ -59,13 +61,13 @@ namespace FileSync
                 if (line.Length != 3)
                     continue;
 
-                SyncList.Add(new CopyManager.CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyManager.CopyDirection)Byte.Parse(line[2]), IsDirectory = true });
+                m_syncList.Add(new CopyManager.CopyWorkItem { SourcePath = line[0], DestinationPath = line[1], Direction = (CopyManager.CopyDirection)Byte.Parse(line[2]), IsDirectory = true });
             }
         }
 
         private void WriteMapingsToFile()
         {
-            File.WriteAllLines(s_listPath, SyncList.Select(e => $"{e.SourcePath}|{e.DestinationPath}|{(byte)e.Direction}"));
+            File.WriteAllLines(s_listPath, m_syncList.Select(e => $"{e.SourcePath}|{e.DestinationPath}|{(byte)e.Direction}"));
         }
 
         #endregion

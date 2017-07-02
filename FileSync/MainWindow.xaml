@@ -5,18 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSync"
         mc:Ignorable="d"
-        Title="FileSync" Height="288.485" Width="374.394"
+        Title="FileSync" Height="263.079" Width="410.425"
         ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:UIContext/>
+    </Window.DataContext>
     <Grid>
-        <Label Content="External drive" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="146,11,0,0" RenderTransformOrigin="0.797,0.415"/>
-        <Label Content="Internal drive" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,11,0,0"/>
-        <ListBox Name="InternalPathsListBox" HorizontalAlignment="Left" Height="205" Margin="11,42,0,0" VerticalAlignment="Top" Width="130" SelectionChanged="InternalPathsListBox_SelectionChanged"/>
-        <ListBox Name="ExternalPathsListBox" HorizontalAlignment="Left" Height="205" Margin="146,42,0,0" VerticalAlignment="Top" Width="130" SelectionChanged="ExternalPathsListBox_SelectionChanged"/>
-        <Button Name="AddMappingBtn" Content="Add" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="281,42,0,0" Click="AddMappingBtn_Click"/>
-        <Button Name="RemoveMappingBtn" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="281,67,0,0" Click="RemoveMappingBtn_Click"/>
-        <Button Name="SyncNowBtn" Content="Sync now" HorizontalAlignment="Left" Margin="281,92,0,0" VerticalAlignment="Top" Width="70" Click="SyncNowBtn_Click"/>
-        <CheckBox Name="RecursiveCheckBox" Content="Recursive" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="281,135,0,0" IsChecked="True"/>
-        <CheckBox Name="SyncExternalToLocalCheckBox" Content="&lt;=" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="281,175,0,0" IsChecked="True" Checked="SyncExternalToLocalCheckBox_Checked" Unchecked="SyncExternalToLocalCheckBox_Unchecked"/>
-        <CheckBox Name="SyncLocalToExternalCheckBox" Content="=&gt;" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="281,155,0,0" IsChecked="True" Checked="SyncLocalToExternalCheckBox_Checked" Unchecked="SyncLocalToExternalCheckBox_Unchecked"/>
+        <Button Name="AddMappingBtn" Content="Add" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="318,37,0,0" Click="AddMappingBtn_Click"/>
+        <Button Name="RemoveMappingBtn" Content="Remove" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="318,62,0,0" Click="RemoveMappingBtn_Click"/>
+        <Button Name="SyncAllBtn" Content="Sync all" HorizontalAlignment="Left" Margin="318,197,0,0" VerticalAlignment="Top" Width="70" Click="SyncAllBtn_Click"/>
+        <Button Name="LoadOtherListBtn" Content="Load list" HorizontalAlignment="Left" VerticalAlignment="Top" Width="70" Margin="318,12,0,0" Click="LoadOtherListBtnBtn_Click"/>
+        <DataGrid Name="MappingsDataGrid" ItemsSource="{Binding Path=MappingRows}" HorizontalAlignment="Left" Height="207" Margin="10,10,0,0" VerticalAlignment="Top" Width="303" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Left" Binding="{Binding LeftPath}" />
+                <DataGridTemplateColumn Header="&lt;&gt;" Width="SizeToHeader" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding SyncIcon}" Stretch="Uniform"></Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Right" Binding="{Binding RightPath}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

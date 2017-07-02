@@ -33,7 +33,9 @@ namespace FileSync
             if (ListManager.SyncList == null)
                 throw new InvalidOperationException("ListManager is not initialized correctly.");
 
-            foreach (var element in ListManager.SyncList)
+            var list = ListManager.SyncList;
+
+            foreach (var element in list)
             {
                 ComputeDifferences(element, filesQueue);
             }
