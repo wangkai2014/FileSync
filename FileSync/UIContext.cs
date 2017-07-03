@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using static FileSync.CopyManager;
 using Res = FileSync.Properties.Resources;
 
 namespace FileSync
@@ -76,10 +77,7 @@ namespace FileSync
 
             private void NotifyPropertyChanged(string propertyName)
             {
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
 
             #endregion
@@ -90,6 +88,8 @@ namespace FileSync
         #region Properties
 
         public List<MappingRow> MappingRows { get; private set; }
+
+        public MappingRow SelectedRow { get; set; }
 
         #endregion
 
@@ -104,37 +104,67 @@ namespace FileSync
 
         #region Public methods
 
-        public void AddRow(string left, string right, CopyManager.CopyDirection direction)
+        public void AddRow(string left, string right, CopyDirection direction)
         {
             MappingRows.Add(new MappingRow { LeftPath = left, RightPath = right, SyncIcon = GetIconFromDirection(direction) });
         }
 
-        public void UpdateRowDirectionIcon(int index, CopyManager.CopyDirection newDirection)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="left">Not changed if null.</param>
+        /// <param name="right">Not changed if null.</param>
+        /// <param name="newDirection"></param>
+        public bool UpdateRow(int index, string left, string right, CopyDirection newDirection)
         {
-            MappingRows[index].SyncIcon = GetIconFromDirection(newDirection);
+            if (index < 0 || index >= MappingRows.Count)
+                return false;
+
+            if (!String.IsNullOrEmpty(left))
+                MappingRows[index].LeftPath = left;
+
+            if (!String.IsNullOrEmpty(right))
+                MappingRows[index].RightPath = right;
+
+            if (newDirection != (CopyDirection.ToDestination | CopyDirection.DeleteAtDestination))
+                MappingRows[index].SyncIcon = GetIconFromDirection(newDirection);
+
+            return true;
+        }
+
+        public bool RemoveRow(int index)
+        {
+            if (index < 0 || index >= MappingRows.Count)
+                return false;
+
+            MappingRows.RemoveAt(index);
+            return true;
         }
 
         #endregion
 
-        private Image GetIconFromDirection(CopyManager.CopyDirection direction)
+        #region Private methods
+
+        private Image GetIconFromDirection(CopyDirection direction)
         {
-            System.Drawing.Image syncIcon;
+            Image syncIcon;
 
             switch (direction)
             {
-                case CopyManager.CopyDirection.ToDestination:
+                case CopyDirection.ToDestination:
                     syncIcon = Res.SyncToRightIcon;
                     break;
-                case CopyManager.CopyDirection.ToSource:
+                case CopyDirection.ToSource:
                     syncIcon = Res.SyncToLeftIcon;
                     break;
-                case CopyManager.CopyDirection.DeleteAtDestination:
+                case CopyDirection.DeleteAtDestination:
                     syncIcon = Res.SyncToRightWithDeletionIcon;
                     break;
-                case CopyManager.CopyDirection.DeleteAtSource:
+                case CopyDirection.DeleteAtSource:
                     syncIcon = Res.SyncToLeftWithDeletionIcon;
                     break;
-                case CopyManager.CopyDirection.ToDestination | CopyManager.CopyDirection.ToSource:
+                case CopyDirection.ToDestination | CopyDirection.ToSource:
                     syncIcon = Res.FullSyncIcon;
                     break;
                 default:
@@ -143,5 +173,7 @@ namespace FileSync
 
             return syncIcon;
         }
+
+        #endregion
     }
 }

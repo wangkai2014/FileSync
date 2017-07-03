@@ -61,6 +61,15 @@ namespace FileSync.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select a directory..
+        /// </summary>
+        public static string DefaultDirectoryBrowserDescription {
+            get {
+                return ResourceManager.GetString("DefaultDirectoryBrowserDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to mappings.list.
         /// </summary>
         public static string DefaultMapPath {

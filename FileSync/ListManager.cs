@@ -57,9 +57,13 @@ namespace FileSync
         /// Call CommitChanges to save the list.
         /// </summary>
         /// <param name="index">Index of the element to remove.</param>
-        public static void DeleteEntry(int index)
+        public static bool DeleteEntry(int index)
         {
+            if (index < 0 || index >= s_syncList.Count)
+                return false;
+
             s_syncList.RemoveAt(index);
+            return true;
         }
 
         /// <summary>
@@ -69,15 +73,21 @@ namespace FileSync
         /// <param name="sourcePath">Not changed if null.</param>
         /// <param name="destinationPath">Not changed if null.</param>
         /// <param name="copyDirection">Optional.</param>
-        public static void EditEntry(int index, string sourcePath, string destinationPath, CopyDirection copyDirection = CopyDirection.ToDestination | CopyDirection.DeleteAtDestination)
+        public static bool EditEntry(int index, string sourcePath, string destinationPath, CopyDirection copyDirection = CopyDirection.ToDestination | CopyDirection.DeleteAtDestination)
         {
-            s_syncList[index].Direction = copyDirection;
+            if (index < 0 || index >= s_syncList.Count)
+                return false;
+
+            if (copyDirection != (CopyDirection.ToDestination | CopyDirection.DeleteAtDestination))
+                s_syncList[index].Direction = copyDirection;
                 
             if (!String.IsNullOrEmpty(sourcePath))
                 s_syncList[index].SourcePath = sourcePath;
 
             if (!String.IsNullOrEmpty(destinationPath))
                 s_syncList[index].DestinationPath = destinationPath;
+
+            return true;
         }
 
         /// <summary>

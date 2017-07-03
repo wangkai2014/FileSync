@@ -54,10 +54,11 @@
                   Width="303" 
                   AutoGenerateColumns="False" 
                   IsReadOnly="True" 
-                  SelectionMode="Extended" 
+                  SelectionMode="Single" 
                   SelectionUnit="Cell" 
                   CanUserReorderColumns="False"
-                  SelectionChanged="MappingsDataGrid_Selected">
+                  SelectedCellsChanged="MappingsDataGrid_SelectionChanged"
+                  SelectedItem="{Binding Path=SelectedRow, Mode=TwoWay}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Left">
                     <DataGridTemplateColumn.CellTemplate>
