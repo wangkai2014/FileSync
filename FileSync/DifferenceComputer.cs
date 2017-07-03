@@ -54,6 +54,13 @@ namespace FileSync
                 return; // No code path should lead here
 
             // -------------- BUG FIX ---------------------
+            // Access to System Volume Information at the root of a removable device is always denied.
+            // TODO: When black lists are implemented, use that to fix this bug more cleanely.
+            if (workItem.SourcePath.Contains("System Volume Information") || workItem.DestinationPath.Contains("System Volume Information"))
+                return;
+            // --------------------------------------------
+
+            // -------------- BUG FIX ---------------------
             // If one of the paths was a root and not the other, it ended with a '\' (and not the other)
             // and the Replace later didn't make sense. These two new strings will be used for the Replace
             // operations only.
