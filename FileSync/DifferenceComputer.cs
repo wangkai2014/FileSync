@@ -53,6 +53,16 @@ namespace FileSync
             if (!workItem.IsDirectory)
                 return; // No code path should lead here
 
+            // -------------- BUG FIX ---------------------
+            // If one of the paths was a root and not the other, it ended with a '\' (and not the other)
+            // and the Replace later didn't make sense. These two new strings will be used for the Replace
+            // operations only.
+            var dirInfo = new DirectoryInfo(workItem.DestinationPath);
+            var destPath = dirInfo.Parent == null ? workItem.DestinationPath.Replace("\\", "") : workItem.DestinationPath;
+            dirInfo = new DirectoryInfo(workItem.SourcePath);
+            var srcPath = dirInfo.Parent == null ? workItem.SourcePath.Replace("\\", "") : workItem.SourcePath;
+            // --------------------------------------------
+
             bool copyToSource = (workItem.Direction & CopyDirection.ToSource) != 0;
             bool copyToDestination = (workItem.Direction & CopyDirection.ToDestination) != 0;
             bool sourceDirectoryExists = Directory.Exists(workItem.SourcePath);
@@ -83,7 +93,7 @@ namespace FileSync
                     foreach (var file in distantFiles)
                     {
                         // Generate the "source" version of the file's path
-                        var sourcePath = file.Replace(workItem.DestinationPath, workItem.SourcePath);
+                        var sourcePath = file.Replace(destPath, srcPath);
                         filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false });
                     }
 
@@ -110,7 +120,7 @@ namespace FileSync
                     foreach (var file in sourceFiles)
                     {
                         // Generate the "destination" version of the file's path
-                        var destinationPath = file.Replace(workItem.SourcePath, workItem.DestinationPath);
+                        var destinationPath = file.Replace(srcPath, destPath);
                         filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false });
                     }
 
@@ -120,7 +130,7 @@ namespace FileSync
 
             // If we made it here, both directories exist and we have to check files one by one and decide which should be copied.
             // TODO: find a more efficient way to do that, I don't like it.
-            var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(workItem.SourcePath, workItem.DestinationPath));
+            var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
             var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
             var commonFiles = filesInSource.Where(f => filesInDestination.Contains(f));
@@ -133,7 +143,7 @@ namespace FileSync
             {
                 foreach (var file in sourceFilesToCopy)
                 {
-                    var sourcePath = file.Replace(workItem.DestinationPath, workItem.SourcePath);
+                    var sourcePath = file.Replace(destPath, srcPath);
                     filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false });
                 }
             }
@@ -142,14 +152,14 @@ namespace FileSync
             {
                 foreach (var file in destinationFilesToCopy)
                 {
-                    var sourcePath = file.Replace(workItem.DestinationPath, workItem.SourcePath);
+                    var sourcePath = file.Replace(destPath, srcPath);
                     filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false });
                 }
             }
 
             // Now we handle the directories, recursively.
             // Note that the path.replace is to allow for a good comparison between source and destination
-            var directoriesInSource = Directory.GetDirectories(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(workItem.SourcePath, workItem.DestinationPath));
+            var directoriesInSource = Directory.GetDirectories(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
             var directoriesInDestination = Directory.GetDirectories(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
             var commonDirectories = directoriesInSource.Where(f => directoriesInDestination.Contains(f));
@@ -158,13 +168,13 @@ namespace FileSync
 
             foreach (var directory in directoriesInSource)
             {
-                var sourcePath = directory.Replace(workItem.DestinationPath, workItem.SourcePath);
+                var sourcePath = directory.Replace(destPath, srcPath);
                 ComputeDifferences(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = directory, Direction = workItem.Direction, IsDirectory = true }, filesQueue);
             }
 
             foreach (var directory in uniqueDestinationDirectories)
             {
-                var sourcePath = directory.Replace(workItem.DestinationPath, workItem.SourcePath);
+                var sourcePath = directory.Replace(destPath, srcPath);
                 ComputeDifferences(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = directory, Direction = workItem.Direction, IsDirectory = true }, filesQueue);
             }
         }
