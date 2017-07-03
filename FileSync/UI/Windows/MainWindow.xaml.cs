@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static FileSync.CopyManager;
+using FileSync.Core;
+using static FileSync.Core.CopyManager;
 using Res = FileSync.Properties.Resources;
 
-namespace FileSync
+namespace FileSync.UI.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

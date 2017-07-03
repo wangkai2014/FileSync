@@ -5,10 +5,10 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using static FileSync.CopyManager;
+using static FileSync.Core.CopyManager;
 using Res = FileSync.Properties.Resources;
 
-namespace FileSync
+namespace FileSync.UI
 {
     public class UIContext
     {

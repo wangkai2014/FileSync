@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static FileSync.CopyManager;
+using static FileSync.Core.CopyManager;
 
-namespace FileSync
+namespace FileSync.Core
 {
     /// <summary>
     /// Main class used to manage the syncing list.

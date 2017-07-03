@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace FileSync
+namespace FileSync.UI
 {
     /// <summary>
     /// This is kinda stupid, UIContext.MappingRow.SyncIcon could just be a path to the image on the disk.

@@ -64,10 +64,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="StringToIntWPFConverter.cs" />
-    <Compile Include="UIContext.cs" />
-    <Compile Include="WPFBitmapConverter.cs" />
-    <Page Include="MainWindow.xaml">
+    <Compile Include="UI\StringToIntWPFConverter.cs" />
+    <Compile Include="UI\UIContext.cs" />
+    <Compile Include="UI\WPFBitmapConverter.cs" />
+    <Page Include="UI\Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -75,20 +75,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CopyManager.cs" />
-    <Compile Include="DifferenceComputer.cs" />
-    <Compile Include="ListManager.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Core\CopyManager.cs" />
+    <Compile Include="Core\DifferenceComputer.cs" />
+    <Compile Include="Core\ListManager.cs" />
+    <Compile Include="UI\Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ProgressWindow.xaml">
+    <Page Include="UI\Windows\ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProgressWindow.xaml.cs">
+    <Compile Include="UI\Windows\ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -135,5 +135,6 @@
   <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

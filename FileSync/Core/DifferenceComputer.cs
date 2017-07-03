@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using static FileSync.CopyManager;
+using static FileSync.Core.CopyManager;
 
-namespace FileSync
+namespace FileSync.Core
 {
     /// <summary>
     /// This class will handle the difference finding logic between source and destination directories.

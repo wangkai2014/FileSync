@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace FileSync
+namespace FileSync.UI
 {
     class StringToIntWPFConverter : IValueConverter
     {

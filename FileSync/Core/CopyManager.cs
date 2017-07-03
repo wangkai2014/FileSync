@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.IO;
 
-namespace FileSync
+namespace FileSync.Core
 {
     /// <summary>
     /// This class will handle the actual copy.
@@ -81,7 +81,7 @@ namespace FileSync
         #region Fields
 
         // We can have multiple queues to handle (or the same one multiple times, 
-        // eg. if there is an end of queue signal in the middle).
+        // like if there is an end of queue signal in the middle).
         private BufferBlock<BufferBlock<CopyWorkItem>> m_workItemQueues;
         private BufferBlock<CopyWorkItem> m_currentWorkItemsQueue;
 
