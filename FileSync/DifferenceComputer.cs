@@ -93,7 +93,9 @@ namespace FileSync
                     var distantDirectories = Directory.EnumerateDirectories(workItem.DestinationPath, "*", SearchOption.AllDirectories);
                     foreach (var directory in distantDirectories)
                     {
-                        filesQueue.Post(new CopyWorkItem { SourcePath = directory, DestinationPath = directory, Direction = CopyDirection.ToSource, IsDirectory = true });
+                        // Generate the "source" version of the directory's path
+                        var sourcePath = directory.Replace(destPath, srcPath);
+                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = sourcePath, Direction = CopyDirection.ToSource, IsDirectory = true });
                     }
 
                     var distantFiles = Directory.EnumerateFiles(workItem.DestinationPath, "*", SearchOption.AllDirectories);
@@ -120,7 +122,9 @@ namespace FileSync
                     var sourceDirectories = Directory.EnumerateDirectories(workItem.SourcePath, "*", SearchOption.AllDirectories);
                     foreach (var directory in sourceDirectories)
                     {
-                        filesQueue.Post(new CopyWorkItem { SourcePath = directory, DestinationPath = directory, Direction = CopyDirection.ToDestination, IsDirectory = true });
+                        // Generate the "source" version of the directory's path
+                        var sourcePath = directory.Replace(destPath, srcPath);
+                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = sourcePath, Direction = CopyDirection.ToDestination, IsDirectory = true });
                     }
 
                     var sourceFiles = Directory.EnumerateFiles(workItem.SourcePath, "*", SearchOption.AllDirectories);

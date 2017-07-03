@@ -33,14 +33,14 @@ namespace FileSync
 
         public class CopyWorkItem
         {
-            #region Fields
+            #region Properties
 
-            public string SourcePath;
-            public string DestinationPath;
+            public string SourcePath { get; set; }
+            public string DestinationPath { get; set; }
 
-            public CopyDirection Direction;
+            public CopyDirection Direction { get; set; }
 
-            public bool IsDirectory;
+            public bool IsDirectory { get; set; }
 
             #endregion
 
@@ -137,35 +137,59 @@ namespace FileSync
                 {
                     case CopyDirection.DeleteAtDestination:
                         if (workItem.IsDirectory)
-                            Directory.Delete(destinationPath);
+                            DeleteDirectory(destinationPath);
                         else
-                            File.Delete(destinationPath);
+                            DeleteFile(destinationPath);
                         break;
 
                     case CopyDirection.DeleteAtSource:
                         if (workItem.IsDirectory)
-                            Directory.Delete(sourcePath);
+                            DeleteDirectory(sourcePath);
                         else
-                            File.Delete(sourcePath);
+                            DeleteFile(sourcePath);
                         break;
 
                     case CopyDirection.ToDestination:
                         if (workItem.IsDirectory)
-                            Directory.CreateDirectory(destinationPath);
+                            CreateDirectory(destinationPath);
                         else
-                            File.Copy(sourcePath, destinationPath);
+                            CopyFile(sourcePath, destinationPath);
                         break;
 
                     case CopyDirection.ToSource:
                         if (workItem.IsDirectory)
-                            Directory.CreateDirectory(sourcePath);
+                            CreateDirectory(sourcePath);
                         else
-                            File.Copy(destinationPath, sourcePath);
+                            CopyFile(destinationPath, sourcePath);
                         break;
                 }
             }
 
             HandleNextQueue(); // Fire and forget
+        }
+
+        private void CreateDirectory(string directory)
+        {
+            // TODO: add a logger or something similar
+            Directory.CreateDirectory(directory);
+        }
+
+        private void CopyFile(string filePath, string destination)
+        {
+            // TODO: add a logger or something similar
+            File.Copy(filePath, destination);
+        }
+
+        private void DeleteDirectory(string directory)
+        {
+            // TODO: add a logger or something similar
+            Directory.Delete(directory);
+        }
+
+        private void DeleteFile(string file)
+        {
+            // TODO: add a logger or something similar
+            File.Delete(file);
         }
 
         #endregion
