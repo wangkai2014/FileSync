@@ -40,7 +40,7 @@
                 Click="SyncAllBtn_Click"/>
         <Button Name="SaveBtn" 
                 Content="Save" 
-                IsEnabled="False"
+                IsEnabled="{Binding Path=IsSaveButtonEnabled}"
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
                 Width="70" 

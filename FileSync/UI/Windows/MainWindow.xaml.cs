@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using FileSync.Core;
-using static FileSync.Core.CopyManager;
+using static FileSync.GlobalDefinitions;
 using Res = FileSync.Properties.Resources;
 
 namespace FileSync.UI.Windows
@@ -25,8 +24,7 @@ namespace FileSync.UI.Windows
         {
             InitializeComponent();
 
-            ListManager.Init(Res.DefaultMapPath);
-            ListManager.Init(@"..\..\..\testList.list"); // TODO: for debugging only, remove.
+            CoreController.Instance.Init();
 
             UpdateListView();
 
@@ -43,11 +41,9 @@ namespace FileSync.UI.Windows
                 return;
 
             context.AddRow("", "", CopyDirection.ToDestination | CopyDirection.ToSource);
-            ListManager.AddEntry("", "", CopyDirection.ToDestination | CopyDirection.ToSource);
+            CoreController.Instance.AddEntryToList("", "", CopyDirection.ToDestination | CopyDirection.ToSource);
 
             MappingsDataGrid.Items.Refresh();
-
-            SetDirty();
         }
 
         private void RemoveMappingBtn_Click(object sender, RoutedEventArgs e)
@@ -58,43 +54,42 @@ namespace FileSync.UI.Windows
                 return;
 
             bool success = context.RemoveRow(m_lastSelectedRowIndex);
-            success &= ListManager.DeleteEntry(m_lastSelectedRowIndex);
+            success &= CoreController.Instance.DeleteEntryFromList(m_lastSelectedRowIndex);
 
             if (success)
             {
                 MappingsDataGrid.Items.Refresh();
-                SetDirty();
             }
         }
 
         private void SyncAllBtn_Click(object sender, RoutedEventArgs e)
         {
-            SyncFiles();
+            CoreController.Instance.StartSync();
         }
 
         private void FullSyncMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.ToDestination | CopyManager.CopyDirection.ToSource);
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyDirection.ToDestination | CopyDirection.ToSource);
         }
 
         private void SyncToRightMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.ToDestination);
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyDirection.ToDestination);
         }
 
         private void SyncToLeftMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.ToSource);
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyDirection.ToSource);
         }
 
         private void SyncToRightWithDeletionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.DeleteAtDestination);
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyDirection.DeleteAtDestination);
         }
 
         private void SyncToLeftWithDeletionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyManager.CopyDirection.DeleteAtSource);
+            ChangeSyncMehtod(m_lastSelectedRowIndex, CopyDirection.DeleteAtSource);
         }
 
         private void MappingsDataGrid_SelectionChanged(object sender, SelectedCellsChangedEventArgs e)
@@ -115,9 +110,7 @@ namespace FileSync.UI.Windows
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            ListManager.CommitChanges();
-
-            SetClean();
+            CoreController.Instance.CommitChangesToListIfAny();
         }
 
         private void LeftTextBlock_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -151,24 +144,14 @@ namespace FileSync.UI.Windows
 
             context.MappingRows.Clear();
 
-            var list = ListManager.SyncList;
+            var list = CoreController.Instance.DirectoryMappingList;
 
             foreach (var item in list)
             {
                 context.AddRow(item.SourcePath, item.DestinationPath, item.Direction);
             }
         }
-
-        private void SyncFiles()
-        {
-            var queue = new System.Threading.Tasks.Dataflow.BufferBlock<CopyManager.CopyWorkItem>();
-
-            System.Threading.Tasks.Task.Factory.StartNew(() => DifferenceComputer.ComputeDifferences(queue));
-
-            System.Threading.Tasks.Task.Factory.StartNew(() => CopyManager.Instance.HandleQueue(queue));
-
-        }
-
+        
         private string GetPathFromUser(string description = null)
         {
             description = description ?? Res.DefaultDirectoryBrowserDescription;
@@ -197,28 +180,9 @@ namespace FileSync.UI.Windows
                 return;
 
             context.UpdateRow(index, left, right, newDirection);
-
-            ListManager.EditEntry(index, left, right, newDirection);
-
-            SetDirty();
+            CoreController.Instance.EditListEntry(index, left, right, newDirection);
         }
-
-        /// <summary>
-        /// Call when a change is made.
-        /// </summary>
-        private void SetDirty()
-        {
-            SaveBtn.IsEnabled = true;
-        }
-
-        /// <summary>
-        /// Call when all changes have been commited.
-        /// </summary>
-        private void SetClean()
-        {
-            SaveBtn.IsEnabled = false;
-        }
-
+        
         #endregion
     }
 }

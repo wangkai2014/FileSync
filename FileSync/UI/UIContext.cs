@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using static FileSync.Core.CopyManager;
+using static FileSync.GlobalDefinitions;
 using Res = FileSync.Properties.Resources;
 
 namespace FileSync.UI
 {
-    public class UIContext
+    public class UIContext : INotifyPropertyChanged
     {
         #region Classes
         
@@ -89,7 +86,7 @@ namespace FileSync.UI
 
         public List<MappingRow> MappingRows { get; private set; }
 
-        public MappingRow SelectedRow { get; set; }
+        public bool IsSaveButtonEnabled => CoreController.Instance.IsListDirty;
 
         #endregion
 
@@ -98,7 +95,14 @@ namespace FileSync.UI
         public UIContext()
         {
             MappingRows = new List<MappingRow> ();
+            CoreController.Instance.SubscribeToListDirtinessChanges(NotifyListDirtyChanged);
         }
+
+        #endregion
+
+        #region Event handlers
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -172,6 +176,11 @@ namespace FileSync.UI
             }
 
             return syncIcon;
+        }
+
+        private void NotifyListDirtyChanged(object sender, EventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsSaveButtonEnabled"));
         }
 
         #endregion

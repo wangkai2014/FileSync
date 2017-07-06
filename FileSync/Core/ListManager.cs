@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static FileSync.GlobalDefinitions;
 using static FileSync.Core.CopyManager;
 
 namespace FileSync.Core
@@ -18,6 +19,9 @@ namespace FileSync.Core
 
         #region Fields
 
+        // NEVER USE! Use property.
+        private static bool s_isDirty;
+
         private static string s_listPath;
 
         private static IList<CopyManager.CopyWorkItem> s_syncList;
@@ -26,7 +30,29 @@ namespace FileSync.Core
 
         #region Properties
 
-        public static IList<CopyManager.CopyWorkItem> SyncList => s_syncList.ToList(); // Return a copy
+        public static IList<CopyWorkItem> SyncList => s_syncList.ToList(); // Return a copy
+
+        /// <summary>
+        /// True if the list has uncommited changes.
+        /// </summary>
+        public static bool IsDirty
+        {
+            get
+            {
+                return s_isDirty;
+            }
+            private set
+            {
+                s_isDirty = value;
+                OnIsDirtyChanged(new EventArgs()); // Actually a bad practice, could take long.
+            }
+        }
+
+        #endregion
+
+        #region Event handlers
+
+        public static event EventHandler IsDirtyChanged;
 
         #endregion
 
@@ -49,6 +75,7 @@ namespace FileSync.Core
         public static void AddEntry(string sourcePath, string destinationPath, CopyDirection direction)
         {
             s_syncList.Add(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = destinationPath, Direction = direction, IsDirectory = true });
+            IsDirty = true;
         }
 
         /// <summary>
@@ -63,6 +90,7 @@ namespace FileSync.Core
                 return false;
 
             s_syncList.RemoveAt(index);
+            IsDirty = true;
             return true;
         }
 
@@ -87,15 +115,25 @@ namespace FileSync.Core
             if (!String.IsNullOrEmpty(destinationPath))
                 s_syncList[index].DestinationPath = destinationPath;
 
+            IsDirty = true;
+
             return true;
         }
 
         /// <summary>
         /// Sounds fancy but actually just flushes the content of the list to the file.
         /// </summary>
-        public static void CommitChanges()
+        /// <returns>False if no changes were made.</returns>
+        public static bool CommitChanges()
         {
+            if (!IsDirty)
+                return false;
+
             File.WriteAllLines(s_listPath, s_syncList.Select(m => $"{m.SourcePath}|{m.DestinationPath}|{(byte)m.Direction}"));
+
+            IsDirty = false;
+
+            return true;
         }
 
         #endregion
@@ -126,6 +164,11 @@ namespace FileSync.Core
         private void WriteMapingsToFile()
         {
             File.WriteAllLines(s_listPath, s_syncList.Select(e => $"{e.SourcePath}|{e.DestinationPath}|{(byte)e.Direction}"));
+        }
+
+        protected static void OnIsDirtyChanged(EventArgs e)
+        {
+            IsDirtyChanged?.Invoke(null, e);
         }
 
         #endregion

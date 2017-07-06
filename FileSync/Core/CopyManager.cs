@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.IO;
+using static FileSync.GlobalDefinitions;
 
 namespace FileSync.Core
 {
@@ -17,19 +18,6 @@ namespace FileSync.Core
     public sealed class CopyManager
     {
         #region Classes and enums
-
-        /// <summary>
-        /// Describes the way files must be synced.
-        /// Unused values are possible (eg: ToDestination | DeleteAtDestination), it's ok,
-        /// it's actually used to signal the end of a queue.
-        /// </summary>
-        public enum CopyDirection
-        {
-            ToDestination = 1, // Copy from source to destination
-            ToSource = 2, // Copy from destination to source
-            DeleteAtDestination = 4, // Delete files that are [in destination but not in source]
-            DeleteAtSource = 8 // Delete files that are [in source but not at destination]
-        }
 
         public class CopyWorkItem
         {

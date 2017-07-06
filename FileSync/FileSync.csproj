@@ -64,6 +64,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CoreController.cs" />
+    <Compile Include="GlobalDefinitions.cs" />
     <Compile Include="UI\StringToIntWPFConverter.cs" />
     <Compile Include="UI\UIContext.cs" />
     <Compile Include="UI\WPFBitmapConverter.cs" />

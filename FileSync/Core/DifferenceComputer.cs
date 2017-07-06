@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks.Dataflow;
+using static FileSync.GlobalDefinitions;
 using static FileSync.Core.CopyManager;
 
 namespace FileSync.Core
