@@ -5,15 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSync.UI.Windows"
         mc:Ignorable="d"
-        Title="Progress" Height="217.574" Width="369.697"
+        Title="Progress" Height="312.076" Width="369.697"
         ResizeMode="NoResize">
     <Grid>
-        <ProgressBar Name="CopyProgressBar" HorizontalAlignment="Left" Height="10" Margin="10,134,0,0" VerticalAlignment="Top" Width="338"/>
         <Label Content="Copying:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
-        <Label Content="To:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,65,0,0"/>
-        <TextBox Name="SourceFileTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="NoWrap" VerticalAlignment="Top" Width="310" Margin="36,36,0,0" IsEnabled="False" Text="--" TextAlignment="Right" FlowDirection="RightToLeft"/>
-        <TextBox Name="DestinationFolderTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="NoWrap" VerticalAlignment="Top" Width="310" Margin="35,91,0,0" IsEnabled="False" Text="--" TextAlignment="Right" FlowDirection="RightToLeft"/>
-        <Button Name="CloseButton" Content="Close" HorizontalAlignment="Left" Margin="273,152,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="Button_Click"/>
-        <Label Name="FileCountLabel" Content="--/--" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,144,0,0" Width="170"/>
+        <TextBox Name="FileNameTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="NoWrap" VerticalAlignment="Top" Width="276" Margin="72,13,0,0" IsEnabled="False" Text="--" TextAlignment="Right" FlowDirection="RightToLeft"/>
+        <ProgressBar Name="FileProgressBar" HorizontalAlignment="Left" Height="10" Margin="10,68,0,0" VerticalAlignment="Top" Width="338"/>
+        <ProgressBar Name="ListProgressBar" HorizontalAlignment="Left" Height="10" Margin="10,97,0,0" VerticalAlignment="Top" Width="338"/>
+        <TextBox Name="FullSizeTextBox" FontSize="8" HorizontalAlignment="Right" Width="Auto" Height="Auto" Margin="0,107,16,0" TextWrapping="NoWrap" Text="ToBind" VerticalAlignment="Top" BorderThickness="0" />
+        <TextBox Name="SingleFileSizeTextBox" FontSize="8" HorizontalAlignment="Right" Width="Auto" Height="Auto" Margin="0,78,16,0" TextWrapping="NoWrap" Text="ToBind" VerticalAlignment="Top" BorderThickness="0" />
+        <TextBox Name="SingleFileSizeCopiedTextBox" FontSize="8" HorizontalAlignment="Left" Width="Auto" Height="Auto" Margin="10,78,0,0" TextWrapping="NoWrap" Text="ToBind" VerticalAlignment="Top" BorderThickness="0" />
+        <TextBox Name="FullSizeCopiedTextBox" FontSize="8" HorizontalAlignment="Left" Width="Auto" Height="Auto" Margin="10,107,0,0" TextWrapping="NoWrap" Text="ToBind" VerticalAlignment="Top" BorderThickness="0" />
+        <DataGrid Name="FilesToCopyDataGrid" Margin="10,131,16,16" HeadersVisibility="None"/>
     </Grid>
 </Window>

@@ -80,6 +80,11 @@ namespace FileSync
             ListManager.IsDirtyChanged += e;
         }
 
+        public void UnsubscribeToListDirtinessChanges(EventHandler e)
+        {
+            ListManager.IsDirtyChanged -= e;
+        }
+
         #endregion
     }
 }
