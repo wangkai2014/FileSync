@@ -38,14 +38,14 @@
                 <DataGridTemplateColumn Header="Left" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=DestinationPath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
+                            <TextBlock Text="{Binding Path=SourcePath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Right" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=SourcePath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
+                            <TextBlock Text="{Binding Path=DestinationPath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

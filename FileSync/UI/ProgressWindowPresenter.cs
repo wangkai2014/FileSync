@@ -98,7 +98,8 @@ namespace FileSync.UI
 
             while (item.Direction != StopCode)
             {
-                if (!item.IsDirectory)
+                // TODO: for now we do not show deletions, remove these two conditions on the direction later.
+                if (!item.IsDirectory && item.Direction != CopyDirection.DeleteAtDestination && item.Direction != CopyDirection.DeleteAtSource)
                     EnqueueFile(item);
 
                 item = await m_filesToCopyQueue.ReceiveAsync();
@@ -120,6 +121,15 @@ namespace FileSync.UI
         private void EnqueueFile(CopyWorkItem item)
         {
             bool showFirst = !FilesToBeCopied.Any();
+
+            // For a better display, we put the copy source on the left
+            // and the destination on the right.
+            if (item.Direction == CopyDirection.ToSource)
+            {
+                var swap = item.DestinationPath;
+                item.DestinationPath = item.SourcePath;
+                item.SourcePath = swap;
+            }
 
             FilesToBeCopied.Add(item);
             m_fullCopySize += item.Size;
