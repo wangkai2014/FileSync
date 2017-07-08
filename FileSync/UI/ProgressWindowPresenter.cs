@@ -158,12 +158,13 @@ namespace FileSync.UI
 
         private string FormatSizeForDisplay(double size)
         {
-            if (size == 0)
-                return "0 B";
+            string unit;
 
-            var unit = "B";
-
-            if (size > 1023 && size < 1048576)
+            if (size < 1024)
+            {
+                unit = "B";
+            }
+            else if (size < 1048576)
             {
                 unit = "KB";
                 size /= 1024;

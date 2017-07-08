@@ -100,8 +100,15 @@ namespace FileSync.Core
                     {
                         // Generate the "source" version of the file's path
                         var sourcePath = file.Replace(destPath, srcPath);
-                        var fileInfo = new FileInfo(file);
-                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
+                        try
+                        {
+                            var fileInfo = new FileInfo(file);
+                            filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
+                        }
+                        catch (Exception)
+                        {
+                            // TODO: Log exception (can happen because path too long or other weird reasons).
+                        }
                     }
 
                     return;
@@ -120,8 +127,8 @@ namespace FileSync.Core
                     var sourceDirectories = Directory.EnumerateDirectories(workItem.SourcePath, "*", SearchOption.AllDirectories);
                     foreach (var directory in sourceDirectories)
                     {
-                        // Generate the "source" version of the directory's path
-                        var sourcePath = directory.Replace(destPath, srcPath);
+                        // Generate the "destination" version of the directory's path
+                        var sourcePath = directory.Replace(srcPath, destPath);
                         filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = sourcePath, Direction = CopyDirection.ToDestination, IsDirectory = true });
                     }
 
@@ -130,8 +137,15 @@ namespace FileSync.Core
                     {
                         // Generate the "destination" version of the file's path
                         var destinationPath = file.Replace(srcPath, destPath);
-                        var fileInfo = new FileInfo(file);
-                        filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
+                        try
+                        {
+                            var fileInfo = new FileInfo(file);
+                            filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
+                        }
+                        catch (Exception)
+                        {
+                            // TODO: Log exception (can happen because path too long or other weird reasons).
+                        }
                     }
 
                     return;
@@ -154,8 +168,15 @@ namespace FileSync.Core
                 foreach (var file in sourceFilesToCopy)
                 {
                     var sourcePath = file.Replace(destPath, srcPath);
-                    var fileInfo = new FileInfo(sourcePath);
-                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
+                    try
+                    {
+                        var fileInfo = new FileInfo(sourcePath);
+                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
+                    }
+                    catch (Exception)
+                    {
+                        // TODO: Log exception (can happen because path too long or other weird reasons).
+                    }
                 }
             }
 
@@ -164,8 +185,15 @@ namespace FileSync.Core
                 foreach (var file in destinationFilesToCopy)
                 {
                     var sourcePath = file.Replace(destPath, srcPath);
-                    var fileInfo = new FileInfo(file);
-                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
+                    try
+                    {
+                        var fileInfo = new FileInfo(file);
+                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
+                    }
+                    catch (Exception)
+                    {
+                        // TODO: Log exception (can happen because path too long or other weird reasons).
+                    }
                 }
             }
 
