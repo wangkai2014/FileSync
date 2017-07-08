@@ -151,7 +151,7 @@
     <value>..\Resources\SyncToLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SyncToLeftWithDeletionDescription" xml:space="preserve">
-    <value>Will copy all elements from right that are missing in left from right to left and delete all elements that are present in left but not in right</value>
+    <value>Will copy all elements from right that are missing in left from right to left and delete all elements that are present in left but not in right (DELETION HAPPENS ON THE LEFT)</value>
   </data>
   <data name="SyncToLeftWithDeletionIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SyncToLeftWithDeletion.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -163,7 +163,7 @@
     <value>..\Resources\syncToRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SyncToRightWithDeletionDescription" xml:space="preserve">
-    <value>Will copy all elements from left that are missing in right from left to right and delete all elements that are present in right but not in left</value>
+    <value>Will copy all elements from left that are missing in right from left to right and delete all elements that are present in right but not in left (DELETION HAPPENS ON THE RIGHT)</value>
   </data>
   <data name="SyncToRightWithDeletionIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SyncToRightWithDeletion.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

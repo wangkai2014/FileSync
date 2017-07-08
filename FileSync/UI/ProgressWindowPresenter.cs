@@ -46,6 +46,8 @@ namespace FileSync.UI
 
         public int FullCopyProgress { get; private set; }
 
+        public bool IsStillSearching { get; private set; }
+
         #endregion
 
         #region Event handlers
@@ -94,6 +96,9 @@ namespace FileSync.UI
 
         private async void ReceiveFilesList()
         {
+            IsStillSearching = true;
+            NotifyPropertyChanged("IsStillSearching");
+
             var item = await m_filesToCopyQueue.ReceiveAsync();
 
             while (item.Direction != StopCode)
@@ -104,6 +109,9 @@ namespace FileSync.UI
 
                 item = await m_filesToCopyQueue.ReceiveAsync();
             }
+
+            IsStillSearching = false;
+            NotifyPropertyChanged("IsStillSearching");
         }
 
         private async void ListenFeedback()

@@ -153,7 +153,7 @@ namespace FileSync.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Will copy all elements from right that are missing in left from right to left and delete all elements that are present in left but not in right.
+        ///   Looks up a localized string similar to Will copy all elements from right that are missing in left from right to left and delete all elements that are present in left but not in right (DELETION HAPPENS ON THE LEFT).
         /// </summary>
         public static string SyncToLeftWithDeletionDescription {
             get {
@@ -191,7 +191,7 @@ namespace FileSync.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Will copy all elements from left that are missing in right from left to right and delete all elements that are present in right but not in left.
+        ///   Looks up a localized string similar to Will copy all elements from left that are missing in right from left to right and delete all elements that are present in right but not in left (DELETION HAPPENS ON THE RIGHT).
         /// </summary>
         public static string SyncToRightWithDeletionDescription {
             get {

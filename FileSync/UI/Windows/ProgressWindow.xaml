@@ -26,7 +26,7 @@
         <TextBox Name="SingleFileSizeCopiedTextBox" FontSize="9" HorizontalAlignment="Left" Width="Auto" Height="Auto" Margin="10,78,0,0" TextWrapping="NoWrap" Text="{Binding Path=CurrentFileSizeCopied, Mode=OneWay}" VerticalAlignment="Top" BorderThickness="0" />
         <TextBox Name="FullSizeCopiedTextBox" FontSize="9" HorizontalAlignment="Left" Width="Auto" Height="Auto" Margin="10,107,0,0" TextWrapping="NoWrap" Text="{Binding Path=FullCopySizeCopied, Mode=OneWay}" VerticalAlignment="Top" BorderThickness="0" />
         <DataGrid Name="FilesToCopyDataGrid" 
-                  ItemsSource="{Binding Path=FilesToBeCopied}"
+                  ItemsSource="{Binding FilesToBeCopied}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   SelectionMode="Single"
@@ -51,5 +51,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Label Content="Searching..." FontSize="8" HorizontalAlignment="Right" Width="Auto" Height="20" Margin="0,0,10,16" Visibility="{Binding Path=IsStillSearching, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>
