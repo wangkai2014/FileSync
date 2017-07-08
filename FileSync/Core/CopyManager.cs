@@ -13,7 +13,7 @@ namespace FileSync.Core
     /// This class will handle the actual copy.
     /// It is a singleton because this program is very IO intensive and having multiple copies simultaneously on
     /// the same (physical) drive is often not desirable.
-    /// TODO: To have more control and display a more accurate progress based on size, implement our own stream copier.
+    /// TODO: IMPLEMENT COPY WITH CopyFileEx TO GET PROGRESS FEEDBACK
     /// </summary>
     public sealed class CopyManager
     {

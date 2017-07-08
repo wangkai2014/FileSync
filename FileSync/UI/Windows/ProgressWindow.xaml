@@ -7,7 +7,8 @@
         xmlns:p="clr-namespace:FileSync.Properties"
         mc:Ignorable="d"
         Title="Progress" Height="312.076" Width="369.697"
-        ResizeMode="NoResize">
+        ResizeMode="CanResizeWithGrip"
+        Closed="Window_Closed">
     <Window.DataContext>
         <local:ProgressWindowPresenter/>
     </Window.DataContext>
@@ -34,14 +35,14 @@
                   Margin="10,131,10,16" 
                   HeadersVisibility="None">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Left">
+                <DataGridTemplateColumn Header="Left" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=DestinationPath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Right">
+                <DataGridTemplateColumn Header="Right" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=SourcePath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>

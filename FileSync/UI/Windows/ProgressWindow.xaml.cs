@@ -21,5 +21,10 @@ namespace FileSync.UI.Windows
             if (progressContext != null)
                 progressContext.Init(fillingQueue, feedbackQueue, FilesToCopyDataGrid);
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            // TODO: Show warning and cancel the copy if user agrees (implement cancellation).
+        }
     }
 }
