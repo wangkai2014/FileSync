@@ -23,6 +23,5 @@ namespace FileSync.UI.Windows
         {
             InitializeComponent();
         }
-        
     }
 }

@@ -66,8 +66,9 @@
     </ApplicationDefinition>
     <Compile Include="CoreController.cs" />
     <Compile Include="GlobalDefinitions.cs" />
+    <Compile Include="UI\ProgressWindowPresenter.cs" />
     <Compile Include="UI\StringToIntWPFConverter.cs" />
-    <Compile Include="UI\UIContext.cs" />
+    <Compile Include="UI\MainWindowPresenter.cs" />
     <Compile Include="UI\WPFBitmapConverter.cs" />
     <Page Include="UI\Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

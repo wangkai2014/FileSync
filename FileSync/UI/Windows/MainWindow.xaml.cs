@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Controls;
 using static FileSync.GlobalDefinitions;
@@ -27,15 +28,13 @@ namespace FileSync.UI.Windows
             CoreController.Instance.Init();
 
             UpdateListView();
-
-            m_progressWindow = new ProgressWindow();
         }
 
         #region Handlers
         
         private void AddMappingBtn_Click(object sender, RoutedEventArgs e)
         {
-            var context = DataContext as UIContext;
+            var context = DataContext as MainWindowPresenter;
 
             if (context == null)
                 return;
@@ -48,7 +47,7 @@ namespace FileSync.UI.Windows
 
         private void RemoveMappingBtn_Click(object sender, RoutedEventArgs e)
         {
-            var context = DataContext as UIContext;
+            var context = DataContext as MainWindowPresenter;
 
             if (context == null)
                 return;
@@ -64,7 +63,17 @@ namespace FileSync.UI.Windows
 
         private void SyncAllBtn_Click(object sender, RoutedEventArgs e)
         {
-            CoreController.Instance.StartSync();
+            var feedbackQueue = new BufferBlock<Tuple<long, bool>>();
+            var fileToCopyQueue = new BufferBlock<CopyWorkItem>();
+            CoreController.Instance.StartSync(fileToCopyQueue, feedbackQueue);
+
+            m_progressWindow = new ProgressWindow();
+            var progressContext = m_progressWindow.DataContext as ProgressWindowPresenter;
+            if (progressContext != null)
+            {
+                progressContext.Init(fileToCopyQueue, feedbackQueue);
+                m_progressWindow.Show();
+            }
         }
 
         private void FullSyncMenuItem_Click(object sender, RoutedEventArgs e)
@@ -94,7 +103,7 @@ namespace FileSync.UI.Windows
 
         private void MappingsDataGrid_SelectionChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            var context = DataContext as UIContext;
+            var context = DataContext as MainWindowPresenter;
 
             if (context == null)
                 return;
@@ -103,7 +112,7 @@ namespace FileSync.UI.Windows
                 return;
 
             // We rely on the fact that we can only select ONE cell. If it changes, this will break
-            var row = (UIContext.MappingRow)MappingsDataGrid.SelectedCells[0].Item;
+            var row = (MainWindowPresenter.MappingRow)MappingsDataGrid.SelectedCells[0].Item;
 
             m_lastSelectedRowIndex = context.MappingRows.IndexOf(row);
         }
@@ -140,7 +149,7 @@ namespace FileSync.UI.Windows
 
         private void UpdateListView()
         {
-            var context = (DataContext as UIContext);
+            var context = (DataContext as MainWindowPresenter);
 
             context.MappingRows.Clear();
 
@@ -174,7 +183,7 @@ namespace FileSync.UI.Windows
 
         private void UpdateEntry(int index, string left, string right, CopyDirection newDirection)
         {
-            var context = DataContext as UIContext;
+            var context = DataContext as MainWindowPresenter;
 
             if (context == null)
                 return;

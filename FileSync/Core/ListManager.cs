@@ -24,7 +24,7 @@ namespace FileSync.Core
 
         private static string s_listPath;
 
-        private static IList<CopyManager.CopyWorkItem> s_syncList;
+        private static IList<CopyWorkItem> s_syncList;
 
         #endregion
 

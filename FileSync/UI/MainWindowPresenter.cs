@@ -7,7 +7,7 @@ using Res = FileSync.Properties.Resources;
 
 namespace FileSync.UI
 {
-    public class UIContext : INotifyPropertyChanged
+    public class MainWindowPresenter : INotifyPropertyChanged
     {
         #region Classes
         
@@ -92,9 +92,9 @@ namespace FileSync.UI
 
         #region Constructors
 
-        public UIContext()
+        public MainWindowPresenter()
         {
-            MappingRows = new List<MappingRow> ();
+            MappingRows = new List<MappingRow>();
             CoreController.Instance.SubscribeToListDirtinessChanges(NotifyListDirtyChanged);
         }
 

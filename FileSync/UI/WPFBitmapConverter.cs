@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 namespace FileSync.UI
 {
     /// <summary>
-    /// This is kinda stupid, UIContext.MappingRow.SyncIcon could just be a path to the image on the disk.
+    /// This is kinda stupid, MainWindowPresenter.MappingRow.SyncIcon could just be a path to the image on the disk.
     /// Instead we use the images we have in our resources and convert them every time we use them
     /// with this converter.
     /// A quick copy-paste from : http://www.shujaat.net/2010/08/wpf-images-from-project-resource.html

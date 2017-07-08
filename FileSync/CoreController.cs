@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FileSync.Core;
+using System.Threading.Tasks.Dataflow;
 using static FileSync.GlobalDefinitions;
-using static FileSync.Core.CopyManager;
 using Res = FileSync.Properties.Resources;
 
 namespace FileSync
@@ -43,16 +43,22 @@ namespace FileSync
             ListManager.Init(Res.DefaultMapPath);
         }
 
-        public void StartSync()
+        public BufferBlock<Tuple<long, bool>> StartSync(BufferBlock<CopyWorkItem> queueToUI, BufferBlock<Tuple<long, bool>> feedbackQueue)
         {
             // TODO: do the appropriate checks and finish the job.
 
             // No need to keep this reference, once the copy is started, we can forget about it.
-            var queue = new System.Threading.Tasks.Dataflow.BufferBlock<CopyWorkItem>();
+            var queueToCopyManager = new BufferBlock<CopyWorkItem>();
 
-            Task.Factory.StartNew(() => DifferenceComputer.ComputeDifferences(queue));
+            var broadcastBlock = new BroadcastBlock<CopyWorkItem>(item => item);
+            broadcastBlock.LinkTo(queueToCopyManager);
+            broadcastBlock.LinkTo(queueToUI);
 
-            Task.Factory.StartNew(() => CopyManager.Instance.HandleQueue(queue));
+            Task.Factory.StartNew(() => DifferenceComputer.ComputeDifferences(broadcastBlock));
+
+            Task.Factory.StartNew(() => CopyManager.Instance.HandleQueue(queueToCopyManager, feedbackQueue));
+
+            return feedbackQueue;
         }
 
         public void AddEntryToList(string sourcePath, string destinationPath, CopyDirection direction)

@@ -17,42 +17,6 @@ namespace FileSync.Core
     /// </summary>
     public sealed class CopyManager
     {
-        #region Classes and enums
-
-        public class CopyWorkItem
-        {
-            #region Properties
-
-            public string SourcePath { get; set; }
-            public string DestinationPath { get; set; }
-
-            public CopyDirection Direction { get; set; }
-
-            public bool IsDirectory { get; set; }
-
-            #endregion
-
-            #region Constructors
-
-            public CopyWorkItem() { }
-
-            /// <summary>
-            /// Copy constructor.
-            /// </summary>
-            /// <param name="copyWorkItem">The object to copy from.</param>
-            public CopyWorkItem(CopyWorkItem copyWorkItem)
-            {
-                this.SourcePath = copyWorkItem.SourcePath;
-                this.DestinationPath = copyWorkItem.DestinationPath;
-                this.Direction = copyWorkItem.Direction;
-                this.IsDirectory = copyWorkItem.IsDirectory;
-            }
-
-            #endregion
-        }
-
-        #endregion
-
         #region Singleton pattern
 
         private static readonly Lazy<CopyManager> lazy =
@@ -70,8 +34,9 @@ namespace FileSync.Core
 
         // We can have multiple queues to handle (or the same one multiple times, 
         // like if there is an end of queue signal in the middle).
-        private BufferBlock<BufferBlock<CopyWorkItem>> m_workItemQueues;
+        private BufferBlock<Tuple<BufferBlock<CopyWorkItem>, BufferBlock<Tuple<long, bool>>>> m_queues;
         private BufferBlock<CopyWorkItem> m_currentWorkItemsQueue;
+        private BufferBlock<Tuple<long, bool>> m_currentFeedbackQueue;
 
         private Task m_copyTask;
 
@@ -83,14 +48,14 @@ namespace FileSync.Core
         /// Enqueue the given buffer to be handled next.
         /// </summary>
         /// <param name="queue"></param>
-        public void HandleQueue(BufferBlock<CopyWorkItem> queue)
+        public void HandleQueue(BufferBlock<CopyWorkItem> queue, BufferBlock<Tuple<long, bool>> feedbackQueue)
         {
-            if (m_workItemQueues == null)
+            if (m_queues == null)
             {
-                m_workItemQueues = new BufferBlock<BufferBlock<CopyWorkItem>>();
+                m_queues = new BufferBlock<Tuple<BufferBlock<CopyWorkItem>, BufferBlock<Tuple<long, bool>>>>();
             }
 
-            m_workItemQueues.Post(queue);
+            m_queues.Post(new Tuple<BufferBlock<CopyWorkItem>, BufferBlock<Tuple<long, bool>>>(queue, feedbackQueue));
 
             if (m_copyTask == null || m_copyTask.IsCompleted)
             {
@@ -105,18 +70,24 @@ namespace FileSync.Core
         // TODO: Add some kind of feedback so we can display what we are copying and progress.
         private async Task HandleNextQueue()
         {
-            if (m_workItemQueues.Count == 0)
+            if (m_queues.Count == 0)
                 return;
 
-            m_currentWorkItemsQueue = await m_workItemQueues.ReceiveAsync();
+            var item = await m_queues.ReceiveAsync();
+
+            m_currentWorkItemsQueue = item.Item1;
+            m_currentFeedbackQueue = item.Item2;
 
             while (true) // Consume the data until we get the end code
             {
                 var workItem = await m_currentWorkItemsQueue.ReceiveAsync();
 
                 // This is our signal that we are done for this queue
-                if (workItem.Direction == (CopyDirection.DeleteAtDestination | CopyDirection.ToDestination))
+                if (workItem.Direction == StopCode)
+                {
+                    m_currentFeedbackQueue.Post(new Tuple<long, bool>(LongStopCode, false));
                     break;
+                }
 
                 var sourcePath = workItem.SourcePath;
                 var destinationPath = workItem.DestinationPath;
@@ -141,14 +112,14 @@ namespace FileSync.Core
                         if (workItem.IsDirectory)
                             CreateDirectory(destinationPath);
                         else
-                            CopyFile(sourcePath, destinationPath);
+                            CopyFile(sourcePath, destinationPath, workItem.Size);
                         break;
 
                     case CopyDirection.ToSource:
                         if (workItem.IsDirectory)
                             CreateDirectory(sourcePath);
                         else
-                            CopyFile(destinationPath, sourcePath);
+                            CopyFile(destinationPath, sourcePath, workItem.Size);
                         break;
                 }
             }
@@ -162,10 +133,13 @@ namespace FileSync.Core
             Directory.CreateDirectory(directory);
         }
 
-        private void CopyFile(string filePath, string destination)
+        private void CopyFile(string filePath, string destination, long fileSize) // TODO: REMOVE FILE SIZE WHEN IMPLEMENT OUR COPY
         {
-            // TODO: add a logger or something similar
+            // TODO: add a logger or something similar.
+            // TODO: when a "detailed" copy is implemented, give higher resolution feedback in loop.
+            m_currentFeedbackQueue.Post(new Tuple<long, bool>(0, false));
             File.Copy(filePath, destination);
+            m_currentFeedbackQueue.Post(new Tuple<long, bool>(fileSize, true));
         }
 
         private void DeleteDirectory(string directory)

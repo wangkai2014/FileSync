@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks.Dataflow;
 using static FileSync.GlobalDefinitions;
-using static FileSync.Core.CopyManager;
 
 namespace FileSync.Core
 {
@@ -26,7 +25,7 @@ namespace FileSync.Core
         /// fill the queue given as a parameter with the resulting copy work items.
         /// </summary>
         /// <param name="filesQueue"></param>
-        public static void ComputeDifferences(BufferBlock<CopyWorkItem> filesQueue)
+        public static void ComputeDifferences(BroadcastBlock<CopyWorkItem> filesQueue)
         {
             if (ListManager.SyncList == null)
                 throw new InvalidOperationException("ListManager is not initialized correctly.");
@@ -39,14 +38,14 @@ namespace FileSync.Core
             }
 
             // Once we are done, we send the "end of queue signal"
-            filesQueue.Post(new CopyWorkItem { Direction = (CopyDirection.DeleteAtDestination | CopyDirection.ToDestination) });
+            filesQueue.Post(new CopyWorkItem { Direction = StopCode });
         }
 
         #endregion
 
         #region Private methods
 
-        private static void ComputeDifferences(CopyWorkItem workItem, BufferBlock<CopyWorkItem> filesQueue)
+        private static void ComputeDifferences(CopyWorkItem workItem, BroadcastBlock<CopyWorkItem> filesQueue)
         {
             if (!workItem.IsDirectory)
                 return; // No code path should lead here
@@ -101,7 +100,8 @@ namespace FileSync.Core
                     {
                         // Generate the "source" version of the file's path
                         var sourcePath = file.Replace(destPath, srcPath);
-                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false });
+                        var fileInfo = new FileInfo(file);
+                        filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
                     }
 
                     return;
@@ -130,7 +130,8 @@ namespace FileSync.Core
                     {
                         // Generate the "destination" version of the file's path
                         var destinationPath = file.Replace(srcPath, destPath);
-                        filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false });
+                        var fileInfo = new FileInfo(file);
+                        filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
                     }
 
                     return;
@@ -153,7 +154,8 @@ namespace FileSync.Core
                 foreach (var file in sourceFilesToCopy)
                 {
                     var sourcePath = file.Replace(destPath, srcPath);
-                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false });
+                    var fileInfo = new FileInfo(sourcePath);
+                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
                 }
             }
 
@@ -162,7 +164,8 @@ namespace FileSync.Core
                 foreach (var file in destinationFilesToCopy)
                 {
                     var sourcePath = file.Replace(destPath, srcPath);
-                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false });
+                    var fileInfo = new FileInfo(file);
+                    filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
                 }
             }
 
