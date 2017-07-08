@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using static FileSync.GlobalDefinitions;
 
 namespace FileSync.UI.Windows
 {
@@ -22,6 +13,13 @@ namespace FileSync.UI.Windows
         public ProgressWindow()
         {
             InitializeComponent();
+        }
+
+        public void Init(BufferBlock<CopyWorkItem> fillingQueue, BufferBlock<Tuple<long, bool>> feedbackQueue)
+        {
+            var progressContext = DataContext as ProgressWindowPresenter;
+            if (progressContext != null)
+                progressContext.Init(fillingQueue, feedbackQueue, FilesToCopyDataGrid);
         }
     }
 }

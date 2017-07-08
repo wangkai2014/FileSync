@@ -34,6 +34,7 @@ namespace FileSync.Core
 
         // We can have multiple queues to handle (or the same one multiple times, 
         // like if there is an end of queue signal in the middle).
+        // Also, queues always come by pairs, on to process and one to push feedback in.
         private BufferBlock<Tuple<BufferBlock<CopyWorkItem>, BufferBlock<Tuple<long, bool>>>> m_queues;
         private BufferBlock<CopyWorkItem> m_currentWorkItemsQueue;
         private BufferBlock<Tuple<long, bool>> m_currentFeedbackQueue;
@@ -67,7 +68,6 @@ namespace FileSync.Core
 
         #region Private methods
 
-        // TODO: Add some kind of feedback so we can display what we are copying and progress.
         private async Task HandleNextQueue()
         {
             if (m_queues.Count == 0)

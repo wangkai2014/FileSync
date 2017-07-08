@@ -68,12 +68,8 @@ namespace FileSync.UI.Windows
             CoreController.Instance.StartSync(fileToCopyQueue, feedbackQueue);
 
             m_progressWindow = new ProgressWindow();
-            var progressContext = m_progressWindow.DataContext as ProgressWindowPresenter;
-            if (progressContext != null)
-            {
-                progressContext.Init(fileToCopyQueue, feedbackQueue);
-                m_progressWindow.Show();
-            }
+            m_progressWindow.Init(fileToCopyQueue, feedbackQueue);
+            m_progressWindow.Show();
         }
 
         private void FullSyncMenuItem_Click(object sender, RoutedEventArgs e)

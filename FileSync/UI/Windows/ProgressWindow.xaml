@@ -4,12 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSync.UI"
+        xmlns:p="clr-namespace:FileSync.Properties"
         mc:Ignorable="d"
         Title="Progress" Height="312.076" Width="369.697"
         ResizeMode="NoResize">
     <Window.DataContext>
         <local:ProgressWindowPresenter/>
     </Window.DataContext>
+    <Window.Resources>
+        <local:WPFBitmapConverter x:Key="ImageConverter"/>
+        <local:StringToIntWPFConverter x:Key="StringToIntConverter"/>
+    </Window.Resources>
     <Grid>
         <Label Content="Copying:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
         <TextBox Name="FileNameTextBox" Height="23" TextWrapping="NoWrap" VerticalAlignment="Top" Margin="72,13,10,0" IsEnabled="False" Text="{Binding Path=CurrentFileName, Mode=OneWay}" TextAlignment="Right" FlowDirection="RightToLeft"/>
@@ -19,6 +24,31 @@
         <TextBox Name="SingleFileSizeTextBox" FontSize="9" HorizontalAlignment="Right" Width="Auto" Height="Auto" Margin="0,78,10,0" TextWrapping="NoWrap" Text="{Binding Path=CurrentFileSize, Mode=OneWay}" VerticalAlignment="Top" BorderThickness="0" />
         <TextBox Name="SingleFileSizeCopiedTextBox" FontSize="9" HorizontalAlignment="Left" Width="Auto" Height="Auto" Margin="10,78,0,0" TextWrapping="NoWrap" Text="{Binding Path=CurrentFileSizeCopied, Mode=OneWay}" VerticalAlignment="Top" BorderThickness="0" />
         <TextBox Name="FullSizeCopiedTextBox" FontSize="9" HorizontalAlignment="Left" Width="Auto" Height="Auto" Margin="10,107,0,0" TextWrapping="NoWrap" Text="{Binding Path=FullCopySizeCopied, Mode=OneWay}" VerticalAlignment="Top" BorderThickness="0" />
-        <DataGrid Name="FilesToCopyDataGrid" Margin="10,131,10,16" HeadersVisibility="None"/>
+        <DataGrid Name="FilesToCopyDataGrid" 
+                  ItemsSource="{Binding Path=FilesToBeCopied}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  CanUserReorderColumns="False"
+                  Margin="10,131,10,16" 
+                  HeadersVisibility="None">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Left">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=DestinationPath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Right">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=SourcePath}" FontSize="{Binding Source={x:Static p:Resources.PathsFontSizeInProgressWindow}, Converter={StaticResource StringToIntConverter}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

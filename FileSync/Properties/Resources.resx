@@ -134,6 +134,9 @@
   <data name="PathsFontSize" xml:space="preserve">
     <value>15</value>
   </data>
+  <data name="PathsFontSizeInProgressWindow" xml:space="preserve">
+    <value>10</value>
+  </data>
   <data name="SettingsFilePath" xml:space="preserve">
     <value>settings</value>
     <comment>Path to the XML file storing settings.</comment>
