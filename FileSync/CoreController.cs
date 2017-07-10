@@ -50,7 +50,7 @@ namespace FileSync
             // No need to keep this reference, once the copy is started, we can forget about it.
             var queueToCopyManager = new BufferBlock<CopyWorkItem>();
 
-            var broadcastBlock = new BroadcastBlock<CopyWorkItem>(item => item);
+            var broadcastBlock = new BroadcastBlock<CopyWorkItem>(item => new CopyWorkItem(item));
             broadcastBlock.LinkTo(queueToCopyManager);
             broadcastBlock.LinkTo(queueToUI);
 

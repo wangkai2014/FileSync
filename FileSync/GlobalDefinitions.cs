@@ -65,6 +65,24 @@ namespace FileSync
                 this.Size = copyWorkItem.Size;
             }
 
+            public override string ToString()
+            {
+                string direction;
+
+                if (Direction == CopyDirection.ToSource)
+                    direction = " << ";
+                else if (Direction == CopyDirection.ToDestination)
+                    direction = " >> ";
+                else if (Direction == CopyDirection.DeleteAtSource)
+                    direction = " <X ";
+                else if (Direction == CopyDirection.DeleteAtDestination)
+                    direction = " X> ";
+                else
+                    direction = " <> ";
+
+                return SourcePath + direction + DestinationPath;
+            }
+
             #endregion
         }
 

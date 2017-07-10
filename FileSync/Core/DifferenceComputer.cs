@@ -14,12 +14,12 @@ namespace FileSync.Core
     {
         #region Fields
 
-
+        private static Logger s_logger;
 
         #endregion
 
         #region Public methods
-        
+
         /// <summary>
         /// Will compute the differences based on the static ListManager and will
         /// fill the queue given as a parameter with the resulting copy work items.
@@ -30,11 +30,21 @@ namespace FileSync.Core
             if (ListManager.SyncList == null)
                 throw new InvalidOperationException("ListManager is not initialized correctly.");
 
+            if (s_logger == null)
+                s_logger = new Logger("DifferenceComputer");
+
             var list = ListManager.SyncList;
 
-            foreach (var element in list)
+            try
             {
-                ComputeDifferences(element, filesQueue);
+                foreach (var element in list)
+                {
+                    ComputeDifferences(element, filesQueue);
+                }
+            }
+            catch (Exception ex)
+            {
+                s_logger.AppendException(ex);
             }
 
             // Once we are done, we send the "end of queue signal"
@@ -78,6 +88,8 @@ namespace FileSync.Core
             if (!copyToSource && !copyToDestination) // ....
                 return;
 
+            s_logger.AppendInfo("Analyzing " + workItem.ToString());
+
             if (copyToSource)
             {
                 // If we copy to source and the current directory doesn't exist, we create it and automatically queue all the content
@@ -105,9 +117,9 @@ namespace FileSync.Core
                             var fileInfo = new FileInfo(file);
                             filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // TODO: Log exception (can happen because path too long or other weird reasons).
+                            s_logger.AppendException(ex);
                         }
                     }
 
@@ -142,9 +154,9 @@ namespace FileSync.Core
                             var fileInfo = new FileInfo(file);
                             filesQueue.Post(new CopyWorkItem { SourcePath = file, DestinationPath = destinationPath, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // TODO: Log exception (can happen because path too long or other weird reasons).
+                            s_logger.AppendException(ex);
                         }
                     }
 
@@ -173,9 +185,9 @@ namespace FileSync.Core
                         var fileInfo = new FileInfo(sourcePath);
                         filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToDestination, IsDirectory = false, Size = fileInfo.Length });
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // TODO: Log exception (can happen because path too long or other weird reasons).
+                        s_logger.AppendException(ex);
                     }
                 }
             }
@@ -190,9 +202,9 @@ namespace FileSync.Core
                         var fileInfo = new FileInfo(file);
                         filesQueue.Post(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = file, Direction = CopyDirection.ToSource, IsDirectory = false, Size = fileInfo.Length });
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // TODO: Log exception (can happen because path too long or other weird reasons).
+                        s_logger.AppendException(ex);
                     }
                 }
             }

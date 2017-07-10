@@ -66,6 +66,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CoreController.cs" />
+    <Compile Include="Core\Logger.cs" />
     <Compile Include="GlobalDefinitions.cs" />
     <Compile Include="UI\ProgressWindowPresenter.cs" />
     <Compile Include="UI\StringToIntWPFConverter.cs" />
