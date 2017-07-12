@@ -165,15 +165,15 @@ namespace FileSync.Core
             }
 
             // If we made it here, both directories exist and we have to check files one by one and decide which should be copied.
-            // TODO: find a more efficient way to do that, I don't like it.
+            // TODO: This is n^2 and I HAVE TO find a more efficient way to do that, I don't like it.
             var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
             var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
-            var commonFiles = filesInSource.Where(f => filesInDestination.Contains(f));
+            var commonFiles = filesInSource.AsParallel().Where(f => filesInDestination.Contains(f));
 
-            var sourceFilesToCopy = filesInSource.Where(f => !commonFiles.Contains(f));
-            var destinationFilesToCopy = filesInDestination.Where(f => !commonFiles.Contains(f));
-            // TODO: Actually, I hate it...
+            var sourceFilesToCopy = filesInSource.AsParallel().Where(f => !commonFiles.Contains(f));
+            var destinationFilesToCopy = filesInDestination.AsParallel().Where(f => !commonFiles.Contains(f));
+            // TODO: I hate it...
 
             if (copyToDestination)
             {

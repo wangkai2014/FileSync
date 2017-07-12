@@ -96,6 +96,7 @@ namespace FileSync.UI
 
         private async void ReceiveFilesList()
         {
+            // TODO: When lots of files to get, this freezes the UI. //ize it.
             IsStillSearching = true;
             NotifyPropertyChanged("IsStillSearching");
 
@@ -116,6 +117,7 @@ namespace FileSync.UI
 
         private async void ListenFeedback()
         {
+            // TODO: When lots of feedback to get, this freezes the UI. //ize it.
             var item = await m_feedbackQueue.ReceiveAsync();
 
             while (item.Item1 != LongStopCode)
