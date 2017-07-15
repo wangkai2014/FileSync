@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks.Dataflow;
@@ -169,11 +170,11 @@ namespace FileSync.Core
             var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
             var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
-            var commonFiles = filesInSource.AsParallel().Where(f => filesInDestination.Contains(f));
+            var commonFiles = GetCommonFiles(filesInSource, filesInDestination);
 
-            var sourceFilesToCopy = filesInSource.AsParallel().Where(f => !commonFiles.Contains(f));
-            var destinationFilesToCopy = filesInDestination.AsParallel().Where(f => !commonFiles.Contains(f));
-            // TODO: I hate it...
+            // TODO: evaluate if it is better to compare source to destination and vice versa rather that using commonFiles
+            var sourceFilesToCopy = GetUniqueLeft(filesInSource, commonFiles);
+            var destinationFilesToCopy = GetUniqueLeft(filesInDestination, commonFiles);
 
             if (copyToDestination)
             {
@@ -214,9 +215,7 @@ namespace FileSync.Core
             var directoriesInSource = Directory.GetDirectories(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
             var directoriesInDestination = Directory.GetDirectories(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
-            var commonDirectories = directoriesInSource.Where(f => directoriesInDestination.Contains(f));
-
-            var uniqueDestinationDirectories = directoriesInDestination.Where(f => !commonDirectories.Contains(f));
+            var uniqueDestinationDirectories = GetUniqueLeft(directoriesInDestination, directoriesInDestination);
 
             foreach (var directory in directoriesInSource)
             {
@@ -229,6 +228,34 @@ namespace FileSync.Core
                 var sourcePath = directory.Replace(destPath, srcPath);
                 ComputeDifferences(new CopyWorkItem { SourcePath = sourcePath, DestinationPath = directory, Direction = workItem.Direction, IsDirectory = true }, filesQueue);
             }
+        }
+
+        private static IEnumerable<string> GetCommonFiles(IEnumerable<string> leftFiles, IEnumerable<string> rightFiles)
+        {
+            return GetSubset(leftFiles, rightFiles, false);
+        }
+
+        private static IEnumerable<string> GetUniqueLeft(IEnumerable<string> leftFiles, IEnumerable<string> rightFiles)
+        {
+            return GetSubset(leftFiles, rightFiles, true);
+        }
+
+        /// <summary>
+        /// Calculates the intersection between two collections of strings.
+        /// </summary>
+        /// <param name="leftFiles"></param>
+        /// <param name="rightFiles"></param>
+        /// <param name="getUniqueInLeft">If true, it is not the intersection that is returned but the left minus the intersection.</param>
+        /// <returns></returns>
+        private static IEnumerable<string> GetSubset(IEnumerable<string> leftFiles, IEnumerable<string> rightFiles, bool getUniqueInLeft)
+        {
+            IEnumerable<string> commonFiles;
+            if (getUniqueInLeft)
+                commonFiles = leftFiles.AsParallel().Where(f => !rightFiles.Contains(f));
+            else
+                commonFiles = leftFiles.AsParallel().Where(f => rightFiles.Contains(f));
+
+            return commonFiles;
         }
 
         #endregion
