@@ -171,7 +171,7 @@ namespace FileSync.Core
 
             var commonFiles = GetCommon(filesInSource, filesInDestination);
 
-            // TODO: evaluate if it is better to compare source to destination and vice versa rather that using commonFiles
+            // TODO: evaluate if it is better to compare source to destination and vice versa rather than using commonFiles
             var sourceFilesToCopy = GetUniqueLeft(filesInSource, commonFiles);
             var destinationFilesToCopy = GetUniqueLeft(filesInDestination, commonFiles);
 
@@ -214,7 +214,7 @@ namespace FileSync.Core
             var directoriesInSource = Directory.GetDirectories(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
             var directoriesInDestination = Directory.GetDirectories(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
 
-            var uniqueDestinationDirectories = GetUniqueLeft(directoriesInDestination, directoriesInDestination);
+            var uniqueDestinationDirectories = GetUniqueLeft(directoriesInDestination, directoriesInSource);
 
             foreach (var directory in directoriesInSource)
             {
