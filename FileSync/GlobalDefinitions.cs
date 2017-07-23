@@ -92,6 +92,7 @@ namespace FileSync
 
         public static CopyDirection StopCode = (CopyDirection.DeleteAtDestination | CopyDirection.ToDestination);
         public static long LongStopCode = -1;
+        public static string LogsDirectory = "logs"; // Relative path to log files
 
         #endregion
     }

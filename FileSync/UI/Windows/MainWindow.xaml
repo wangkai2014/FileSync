@@ -102,5 +102,10 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="ShowLogsButton" 
+            Content="Show logs" 
+            VerticalAlignment="Top" 
+            Margin="313,85,10,0" 
+            Click="ShowLogsButton_Click"/>
     </Grid>
 </Window>

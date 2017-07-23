@@ -72,8 +72,8 @@ namespace FileSync.Core
 
         private void GenerateNewLogFile()
         {
-            m_logFilePath = $"logs\\{m_loggerName}_info_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm-ss-fff")}.log";
-            m_exceptionLogFilePath = $"logs\\{m_loggerName}_exceptions_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm-ss-fff")}.log";
+            m_logFilePath = Path.Combine(GlobalDefinitions.LogsDirectory, $"{m_loggerName}_info_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm-ss-fff")}.log");
+            m_exceptionLogFilePath = Path.Combine(GlobalDefinitions.LogsDirectory, $"{m_loggerName}_exceptions_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm-ss-fff")}.log");
         }
 
         #endregion

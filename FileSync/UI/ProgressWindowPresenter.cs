@@ -153,6 +153,9 @@ namespace FileSync.UI
 
         private void DequeueFile()
         {
+            if (!FilesToBeCopied.Any())
+                return;
+
             FilesToBeCopied.RemoveAt(0);
 
             NotifyPropertyChanged("FilesToBeCopied");

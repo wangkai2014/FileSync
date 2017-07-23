@@ -187,7 +187,12 @@ namespace FileSync.UI.Windows
             context.UpdateRow(index, left, right, newDirection);
             CoreController.Instance.EditListEntry(index, left, right, newDirection);
         }
-        
+
         #endregion
+
+        private void ShowLogsButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(LogsDirectory);
+        }
     }
 }

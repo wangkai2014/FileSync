@@ -166,11 +166,10 @@ namespace FileSync.Core
             }
 
             // If we made it here, both directories exist and we have to check files one by one and decide which should be copied.
-            // TODO: This is n^2 and I HAVE TO find a more efficient way to do that, I don't like it.
-            var filesInSource = Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath));
-            var filesInDestination = Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly);
+            var filesInSource = new HashSet<string>(Directory.GetFiles(workItem.SourcePath, "*", SearchOption.TopDirectoryOnly).Select(path => path.Replace(srcPath, destPath)));
+            var filesInDestination = new HashSet<string>(Directory.GetFiles(workItem.DestinationPath, "*", SearchOption.TopDirectoryOnly));
 
-            var commonFiles = GetCommonFiles(filesInSource, filesInDestination);
+            var commonFiles = GetCommon(filesInSource, filesInDestination);
 
             // TODO: evaluate if it is better to compare source to destination and vice versa rather that using commonFiles
             var sourceFilesToCopy = GetUniqueLeft(filesInSource, commonFiles);
@@ -230,7 +229,7 @@ namespace FileSync.Core
             }
         }
 
-        private static IEnumerable<string> GetCommonFiles(IEnumerable<string> leftFiles, IEnumerable<string> rightFiles)
+        private static IEnumerable<string> GetCommon(IEnumerable<string> leftFiles, IEnumerable<string> rightFiles)
         {
             return GetSubset(leftFiles, rightFiles, false);
         }
@@ -249,6 +248,7 @@ namespace FileSync.Core
         /// <returns></returns>
         private static IEnumerable<string> GetSubset(IEnumerable<string> leftFiles, IEnumerable<string> rightFiles, bool getUniqueInLeft)
         {
+            // TODO: if the functionnality is implemented, add file size/MD5 comparison here.
             IEnumerable<string> commonFiles;
             if (getUniqueInLeft)
                 commonFiles = leftFiles.AsParallel().Where(f => !rightFiles.Contains(f));
